@@ -40,10 +40,10 @@
         input, select, textarea { background: rgba(0,0,0,0.5); border: 1px solid #444; color: white; padding: 12px; border-radius: 8px; width: 100%; font-size: 1rem; }
         label { font-size: 0.85rem; color: #888; margin-bottom: 8px; display: block; }
 
-        /* 關鍵修正：數字範圍排在同一列 */
+        /* 關鍵修正：將數字框完整包含在容器內 */
         .range-container {
-            display: flex !important;
-            flex-direction: row !important;
+            display: flex; /* 預設為 flex 配合 toggleModeUI */
+            flex-direction: row;
             align-items: center;
             justify-content: center;
             gap: 15px;
@@ -51,7 +51,7 @@
             margin-top: 5px;
         }
         .range-container input {
-            flex: 0 1 120px !important; /* 限制寬度防止跑版 */
+            flex: 0 1 120px;
             text-align: center;
         }
         .range-label {
@@ -65,22 +65,20 @@
         .main-stage { display: flex; flex-direction: column; align-items: center; justify-content: space-around; position: relative; padding: 30px; }
         .prize-name { font-family: 'Orbitron'; font-size: 3rem; font-weight: 900; color: white; margin: 0; text-align: center; text-shadow: 0 0 20px rgba(0,243,255,0.5); }
         
-        .monitor { width: 95%; height: 50vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #111 0%, #000 100%); border-radius: 40px; border: 2px solid #333; position: relative; overflow: hidden; box-shadow: inset 0 0 50px black; }
-        .rolling-text { font-family: 'Orbitron'; font-size: 8rem; font-weight: 900; text-align: center; transition: all 0.2s; }
+        .monitor { width: 95%; height: 50vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #111 0%, #000 100%); border-radius: 40px; border: 2px solid #333; position: relative; overflow: hidden; }
+        .rolling-text { font-family: 'Orbitron'; font-size: 8rem; font-weight: 900; text-align: center; }
         .winner-active { color: var(--gold); text-shadow: 0 0 50px var(--gold); transform: scale(1.1); }
 
-        /* 側邊欄歷史榜單 */
+        /* 歷史榜單 */
         .stage-history { background: rgba(255,255,255,0.02); border-left: 1px solid #222; padding: 20px; display: flex; flex-direction: column; }
         .history-title { font-family: 'Orbitron'; color: var(--neon-pink); font-size: 1.1rem; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 15px; }
         .history-list { flex: 1; overflow-y: auto; }
         .history-item { background: rgba(255,255,255,0.05); border-radius: 10px; padding: 12px; margin-bottom: 10px; border-left: 4px solid var(--neon-blue); }
-        .history-item.status-absent { border-left-color: var(--absent-red); opacity: 0.6; }
 
         .progress-bar-container { width: 100%; height: 8px; background: #222; position: absolute; bottom: 0; left: 0; display: none; }
         #progress-fill { height: 100%; width: 0%; background: linear-gradient(to right, var(--neon-blue), var(--neon-pink)); }
 
         .btn-draw { padding: 20px 80px; font-size: 2.2rem; border-radius: 100px; border: none; background: var(--neon-pink); color: white; font-weight: 900; cursor: pointer; box-shadow: 0 0 40px rgba(255,0,85,0.4); font-family: 'Orbitron'; }
-        .btn-draw:active { transform: scale(0.95); }
 
         /* 彈窗 */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); backdrop-filter: blur(15px); display: none; align-items: center; justify-content: center; z-index: 9999; }
@@ -98,7 +96,6 @@
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th { text-align: left; color: #888; font-size: 0.8rem; padding: 10px; border-bottom: 1px solid #333; }
         td { padding: 12px 10px; border-bottom: 1px solid #222; font-size: 0.9rem; }
-        .text-absent { color: var(--absent-red); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -106,7 +103,7 @@
     <section id="setup-view" class="view active">
         <div class="setup-grid">
             <div class="setup-header full-col" style="text-align: center; margin-bottom: 10px;">
-                <h1>Drawing System Setup</h1>
+                <h1>DRAWING SYSTEM SETUP</h1>
                 <p style="color: #666;">請先完成名單載入與參數設定</p>
             </div>
 
@@ -135,31 +132,32 @@
 
                     <div id="ui-excel" style="display:none;">
                         <input type="file" id="excelFile" accept=".xlsx, .xls" onchange="handleExcel(this)">
+                        <p style="font-size: 0.7rem; color: #888; margin-top: 8px;">請選擇包含名單的 .xlsx 檔案</p>
                     </div>
 
                     <div id="ui-manual" style="display:none;">
-                        <textarea id="manualList" placeholder="每行一個名字..."></textarea>
+                        <textarea id="manualList" rows="4" placeholder="每行輸入一個名字..."></textarea>
                     </div>
                 </div>
             </div>
 
             <div class="setup-card full-col">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                    <h2>歷史紀錄與資料管理</h2>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h2>歷史紀錄</h2>
                     <div style="display:flex; gap:10px;">
-                        <button onclick="exportResults()" style="background:var(--neon-blue); color:black; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-weight:bold;">匯出 Excel</button>
-                        <button onclick="clearAllData()" style="background:var(--neon-pink); color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-weight:bold;">全面重設系統</button>
+                        <button onclick="exportResults()" style="background:var(--neon-blue); border:none; padding:5px 12px; border-radius:5px; font-weight:bold; cursor:pointer;">匯出Excel</button>
+                        <button onclick="clearAllData()" style="background:var(--neon-pink); color:white; border:none; padding:5px 12px; border-radius:5px; font-weight:bold; cursor:pointer;">重設系統</button>
                     </div>
                 </div>
-                <div id="setup-history-container" style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 10px;"></div>
+                <div id="setup-history-container" style="max-height: 150px; overflow-y: auto;"></div>
             </div>
 
-            <button class="full-col" style="padding:22px; background:linear-gradient(45deg, var(--neon-blue), #0077ff); color:white; border:none; border-radius:15px; font-size:1.6rem; font-weight:bold; cursor:pointer; box-shadow: 0 10px 20px rgba(0,243,255,0.2);" onclick="enterStage()">進入抽獎舞台</button>
+            <button class="full-col" style="padding:22px; background:linear-gradient(45deg, var(--neon-blue), #0077ff); color:white; border:none; border-radius:15px; font-size:1.6rem; font-weight:bold; cursor:pointer;" onclick="enterStage()">進入抽獎舞台</button>
         </div>
     </section>
 
     <section id="stage-view" class="view">
-        <button class="btn-back" onclick="exitStage()">◀ 重設並返回設定</button>
+        <button class="btn-back" onclick="exitStage()">◀ 返回設定</button>
         <div class="main-stage">
             <h2 id="display-prize" class="prize-name">PRIZE</h2>
             <div class="monitor">
@@ -176,11 +174,11 @@
 
     <div class="modal-overlay" id="decisionModal">
         <div class="modal">
-            <h2 style="color:var(--gold)">中獎名單揭曉</h2>
+            <h2 style="color:var(--gold)">中獎揭曉</h2>
             <div id="modalWinnerList" class="modal-winner"></div>
             <div class="modal-btns">
-                <button class="btn-m btn-m-confirm" onclick="finalizeDraw('confirm')">確認領獎 (從池中移除)</button>
-                <button class="btn-m btn-m-absent" onclick="finalizeDraw('absent')">人員缺席 (註記並移除)</button>
+                <button class="btn-m btn-m-confirm" onclick="finalizeDraw('confirm')">確認領獎 (移除)</button>
+                <button class="btn-m btn-m-absent" onclick="finalizeDraw('absent')">人員缺席 (移除並註記)</button>
                 <button class="btn-m btn-m-cancel" onclick="finalizeDraw('cancel')">作廢重抽 (保留號碼)</button>
             </div>
         </div>
@@ -196,9 +194,10 @@
 
         function toggleModeUI() {
             const m = document.getElementById('mode').value;
-            document.getElementById('ui-number').style.display = m==='number'?'flex':'none';
-            document.getElementById('ui-excel').style.display = m==='excel'?'block':'none';
-            document.getElementById('ui-manual').style.display = m==='manual'?'block':'none';
+            // 關鍵邏輯：切換顯示模式，確保只有選中的會出現
+            document.getElementById('ui-number').style.display = (m === 'number') ? 'flex' : 'none';
+            document.getElementById('ui-excel').style.display = (m === 'excel') ? 'block' : 'none';
+            document.getElementById('ui-manual').style.display = (m === 'manual') ? 'block' : 'none';
         }
 
         function handleExcel(input) {
@@ -206,7 +205,7 @@
             reader.onload = (e) => {
                 const wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
                 excelData = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {header: 1}).flat().filter(v => v);
-                alert("已成功讀取 " + excelData.length + " 位人員名單");
+                alert("已載入 " + excelData.length + " 筆名單");
             };
             reader.readAsArrayBuffer(input.files[0]);
         }
@@ -215,26 +214,20 @@
             const mode = document.getElementById('mode').value;
             let list = [];
             if(mode==='number') {
-                const min = +document.getElementById('minNum').value;
-                const max = +document.getElementById('maxNum').value;
-                for(let i=min; i<=max; i++) list.push(i.toString());
+                for(let i=+document.getElementById('minNum').value; i<=+document.getElementById('maxNum').value; i++) list.push(i.toString());
             } else if(mode==='excel') {
                 list = [...excelData];
             } else {
                 list = document.getElementById('manualList').value.split('\n').map(v=>v.trim()).filter(v=>v);
             }
 
-            // 過濾掉已經中獎或標記缺席的人
             const removed = records.map(r => r.winner);
             currentPool = list.filter(p => !removed.includes(p));
 
-            if(currentPool.length < +document.getElementById('batchCount').value) {
-                return alert("賸餘人數不足，無法進行此規模的抽獎！");
-            }
+            if(currentPool.length < +document.getElementById('batchCount').value) return alert("可用人數不足！");
 
             document.getElementById('display-prize').innerText = document.getElementById('prizeName').value;
             document.getElementById('rolling-area').innerText = "READY";
-            document.getElementById('rolling-area').classList.remove('winner-active');
             document.getElementById('setup-view').classList.remove('active');
             document.getElementById('stage-view').classList.add('active');
             refreshUI();
@@ -256,12 +249,8 @@
 
             rollTimer = setInterval(() => {
                 let t = [];
-                for(let i=0; i<count; i++) {
-                    t.push(currentPool[Math.floor(Math.random()*currentPool.length)]);
-                }
+                for(let i=0; i<count; i++) t.push(currentPool[Math.floor(Math.random()*currentPool.length)]);
                 document.getElementById('rolling-area').innerText = t.join('  ');
-                // 根據人數調整字體大小
-                document.getElementById('rolling-area').style.fontSize = count > 3 ? '4rem' : '8rem';
             }, 60);
 
             anime({
@@ -271,12 +260,12 @@
                 easing: 'linear',
                 complete: () => {
                     clearInterval(rollTimer);
-                    showResult();
+                    showFinalResult();
                 }
             });
         }
 
-        function showResult() {
+        function showFinalResult() {
             document.getElementById('progress-fill').style.width = '0%';
             document.getElementById('progressBar').style.display = 'none';
             const count = +document.getElementById('batchCount').value;
@@ -290,7 +279,7 @@
 
             document.getElementById('rolling-area').innerText = lastWinners.join('  ');
             document.getElementById('rolling-area').classList.add('winner-active');
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ffcf4b', '#00f3ff', '#ff0055'] });
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
 
             setTimeout(() => {
                 document.getElementById('modalWinnerList').innerText = lastWinners.join(', ');
@@ -301,19 +290,12 @@
         function finalizeDraw(type) {
             if (type !== 'cancel') {
                 const pName = document.getElementById('prizeName').value;
-                const statusStr = (type === 'confirm') ? '中獎' : '缺席';
-                
+                const status = (type === 'confirm') ? '中獎' : '缺席';
                 lastWinners.forEach(w => {
-                    records.push({ 
-                        時間: new Date().toLocaleTimeString(), 
-                        獎項: pName, 
-                        winner: w, 
-                        狀態: statusStr 
-                    });
+                    records.push({ 時間: new Date().toLocaleTimeString(), 獎項: pName, winner: w, 狀態: status });
                     currentPool = currentPool.filter(p => p !== w);
                 });
             }
-            
             document.getElementById('decisionModal').style.display = 'none';
             document.getElementById('mainBtn').disabled = false;
             document.getElementById('rolling-area').classList.remove('winner-active');
@@ -322,43 +304,29 @@
         }
 
         function refreshUI() {
-            // 更新舞台右側側邊欄
             document.getElementById('stage-history-list').innerHTML = records.slice().reverse().map(r => `
-                <div class="history-item ${r.狀態==='缺席'?'status-absent':''}">
-                    <div style="font-size:0.7rem; color:#aaa;">${r.獎項} [${r.狀態}]</div>
+                <div class="history-item" style="border-left-color:${r.狀態==='缺席'?'var(--absent-red)':'var(--neon-blue)'}">
+                    <div style="font-size:0.7rem; color:#888;">${r.獎項} - ${r.狀態}</div>
                     <div style="font-weight:bold; color:${r.狀態==='缺席'?'var(--absent-red)':'var(--gold)'}">${r.winner}</div>
                 </div>
             `).join('');
 
-            // 更新設定頁面的紀錄表格
-            const setupContainer = document.getElementById('setup-history-container');
-            if(!records.length) {
-                setupContainer.innerHTML = `<p style="text-align:center; color:#555; padding:20px;">暫無抽獎數據</p>`;
-            } else {
-                setupContainer.innerHTML = `<table><thead><tr><th>時間</th><th>獎項</th><th>名字/號碼</th><th>狀態</th></tr></thead><tbody>
-                    ${records.slice().reverse().map(r => `<tr>
-                        <td>${r.時間}</td><td>${r.獎項}</td><td>${r.winner}</td>
-                        <td class="${r.狀態==='缺席'?'text-absent':''}">${r.狀態}</td>
-                    </tr>`).join('')}
-                </tbody></table>`;
-            }
+            const setupTable = document.getElementById('setup-history-container');
+            setupTable.innerHTML = records.length ? `<table><thead><tr><th>時間</th><th>獎項</th><th>名單</th><th>狀態</th></tr></thead><tbody>
+                ${records.slice().reverse().map(r => `<tr><td>${r.時間}</td><td>${r.獎項}</td><td>${r.winner}</td><td style="color:${r.狀態==='缺席'?'var(--absent-red)':'#fff'}">${r.狀態}</td></tr>`).join('')}
+            </tbody></table>` : `<p style="text-align:center; color:#555; padding:20px;">暫無紀錄</p>`;
         }
 
         function clearAllData() {
-            if(confirm("警告：這將會清除所有歷史紀錄與已載入名單，確定要重設嗎？")) {
-                records = []; excelData = [];
-                document.getElementById('manualList').value = "";
-                document.getElementById('excelFile').value = "";
-                refreshUI();
-            }
+            if(confirm("確定重設所有資料與紀錄？")) { records=[]; excelData=[]; refreshUI(); }
         }
 
         function exportResults() {
-            if(!records.length) return alert("目前沒有可匯出的紀錄！");
+            if(!records.length) return alert("無資料可匯出");
             const ws = XLSX.utils.json_to_sheet(records);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "中獎與缺席名單");
-            XLSX.writeFile(wb, "抽獎結果報告.xlsx");
+            XLSX.utils.book_append_sheet(wb, ws, "抽獎紀錄");
+            XLSX.writeFile(wb, "抽獎結果.xlsx");
         }
     </script>
 </body>
