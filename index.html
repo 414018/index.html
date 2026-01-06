@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRO-LEVEL 抽獎系統 - 旗艦自動化版</title>
+    <title>PRO-LEVEL 抽獎系統</title>
     
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -15,6 +15,7 @@
             --gold: #ffcf4b;
             --neon-blue: #00f3ff;
             --neon-pink: #ff0055;
+            --absent-red: #ff4d4d;
             --bg-dark: #0a0b10;
             --card-bg: rgba(255, 255, 255, 0.05);
         }
@@ -22,12 +23,11 @@
         * { box-sizing: border-box; }
         body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-dark); color: white; margin: 0; overflow: hidden; height: 100vh; }
 
-        /* 視圖切換 */
         .view { display: none; height: 100vh; width: 100vw; padding: 30px; }
         .view.active { display: flex; animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- 第一頁：參數設定 --- */
+        /* --- 設定中心 --- */
         #setup-view { flex-direction: column; align-items: center; overflow-y: auto; background: radial-gradient(circle at center, #1a1b26 0%, #0a0b10 100%); }
         .setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; max-width: 1000px; padding-bottom: 50px; }
         .setup-card { background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; }
@@ -37,45 +37,61 @@
         input, select, textarea { background: rgba(0,0,0,0.5); border: 1px solid #444; color: white; padding: 12px; border-radius: 8px; width: 100%; font-size: 1rem; }
         label { font-size: 0.85rem; color: #888; margin-bottom: 8px; display: block; }
 
-        /* --- 第二頁：抽獎舞台 --- */
+        /* 強制同一列的排版關鍵 */
+        .range-container {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+        .range-container input {
+            flex: 1;
+            text-align: center;
+            width: auto;
+        }
+        .range-label {
+            color: #888;
+            white-space: nowrap;
+            font-size: 1rem;
+        }
+
+        /* --- 抽獎舞台 --- */
         #stage-view { display: grid; grid-template-columns: 1fr 350px; background: black; }
         .main-stage { display: flex; flex-direction: column; align-items: center; justify-content: space-around; position: relative; padding: 40px; }
-        
         .prize-name { font-family: 'Orbitron'; font-size: 3.5rem; font-weight: 900; color: white; margin: 0; text-align: center; }
-        
         .monitor { width: 95%; height: 50vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #111 0%, #000 100%); border-radius: 40px; border: 1px solid #333; position: relative; overflow: hidden; }
-        .rolling-text { font-family: 'Orbitron'; font-size: 8rem; font-weight: 900; text-align: center; transition: 0.1s; }
+        .rolling-text { font-family: 'Orbitron'; font-size: 8rem; font-weight: 900; text-align: center; }
         .winner-active { color: var(--gold); text-shadow: 0 0 50px var(--gold); }
 
-        /* 右側即時歷史 */
+        /* 歷史榜單 */
         .stage-history { background: rgba(255,255,255,0.02); border-left: 1px solid #222; padding: 20px; display: flex; flex-direction: column; }
         .history-title { font-family: 'Orbitron'; color: var(--neon-pink); font-size: 1.2rem; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 15px; }
         .history-list { flex: 1; overflow-y: auto; }
         .history-item { background: rgba(255,255,255,0.05); border-radius: 10px; padding: 12px; margin-bottom: 10px; border-left: 3px solid var(--neon-blue); animation: slideIn 0.3s ease-out; }
-        @keyframes slideIn { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .history-item.status-absent { border-left-color: var(--absent-red); opacity: 0.7; }
 
         /* 進度條 */
         .progress-bar-container { width: 100%; height: 6px; background: #222; position: absolute; bottom: 0; left: 0; display: none; }
-        #progress-fill { height: 100%; width: 0%; background: var(--neon-blue); box-shadow: 0 0 10px var(--neon-blue); }
+        #progress-fill { height: 100%; width: 0%; background: var(--neon-blue); }
 
         .btn-draw { padding: 18px 100px; font-size: 2.5rem; border-radius: 100px; border: none; background: var(--neon-pink); color: white; font-weight: 900; cursor: pointer; box-shadow: 0 0 30px rgba(255,0,85,0.3); font-family: 'Orbitron'; }
-        .btn-draw:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        /* 決策彈窗 */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 9999; }
-        .modal { background: #1a1b26; border: 2px solid var(--gold); padding: 40px; border-radius: 30px; text-align: center; max-width: 550px; width: 90%; }
-        .modal-winner { font-size: 3rem; font-weight: 900; color: white; margin: 25px 0; font-family: 'Orbitron'; }
         
-        .btn-confirm { background: var(--gold); color: black; border: none; padding: 15px 35px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
-        .btn-cancel { background: #333; color: white; border: none; padding: 15px 35px; border-radius: 12px; cursor: pointer; font-size: 1.1rem; margin-left: 10px; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 9999; }
+        .modal { background: #1a1b26; border: 2px solid var(--gold); padding: 40px; border-radius: 30px; text-align: center; max-width: 600px; width: 90%; }
+        .modal-winner { font-size: 3rem; font-weight: 900; color: white; margin: 25px 0; font-family: 'Orbitron'; }
+        .modal-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px; }
+        .btn-m { padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1rem; border: none; }
+        .btn-m-confirm { background: var(--gold); color: black; grid-column: span 2; font-size: 1.2rem; }
+        .btn-m-absent { background: var(--absent-red); color: white; }
+        .btn-m-cancel { background: #333; color: white; }
 
-        .btn-back { position: absolute; top: 25px; left: 25px; background: rgba(255,255,255,0.05); border: 1px solid #444; color: #aaa; cursor: pointer; padding: 8px 18px; border-radius: 10px; transition: 0.3s; }
-        .btn-back:hover { color: white; background: rgba(255,255,255,0.15); border-color: white; }
-
-        /* 表格樣式 */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .btn-back { position: absolute; top: 25px; left: 25px; background: rgba(255,255,255,0.05); border: 1px solid #444; color: #aaa; cursor: pointer; padding: 8px 18px; border-radius: 10px; }
+        
+        table { width: 100%; border-collapse: collapse; }
         th { text-align: left; color: #666; font-size: 0.8rem; padding: 8px; border-bottom: 1px solid #333; }
         td { padding: 10px 8px; border-bottom: 1px solid #222; font-size: 0.9rem; }
+        .text-absent { color: var(--absent-red); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -83,14 +99,14 @@
     <section id="setup-view" class="view active">
         <div class="setup-grid">
             <div class="setup-header full-col" style="text-align: center; margin-bottom: 20px;">
-                <h1>DRAWING SYSTEM SETUP</h1>
-                <p style="color: #666;">請先完成名單載入與參數設定</p>
+                <h1>DRAWING ENGINE PRO</h1>
+                <p style="color: #666;">配置您的抽獎參數</p>
             </div>
 
             <div class="setup-card">
                 <h2>獎項配置</h2>
                 <div style="display:flex; flex-direction:column; gap:15px;">
-                    <div><label>當前獎項名稱</label><input type="text" id="prizeName" value="一等獎 - 旗艦智慧手機"></div>
+                    <div><label>獎項名稱</label><input type="text" id="prizeName" value="特等獎"></div>
                     <div><label>每次抽出人數</label><input type="number" id="batchCount" value="1" min="1"></div>
                 </div>
             </div>
@@ -100,52 +116,51 @@
                 <div style="display:flex; flex-direction:column; gap:15px;">
                     <select id="mode" onchange="toggleModeUI()">
                         <option value="number">數字範圍 (1 - N)</option>
-                        <option value="excel">Excel 檔案上傳</option>
+                        <option value="excel">Excel 檔案匯入</option>
+                        <option value="manual">手動輸入名單</option>
                     </select>
-                    <div id="ui-number" style="display: flex; gap: 10px;">
-                        <input type="number" id="minNum" value="1" placeholder="最小值">
-                        <input type="number" id="maxNum" value="500" placeholder="最大值">
+
+                    <div id="ui-number" class="range-container">
+                        <input type="number" id="minNum" value="1">
+                        <span class="range-label">至</span>
+                        <input type="number" id="maxNum" value="26">
                     </div>
+
                     <div id="ui-excel" style="display:none;">
                         <input type="file" id="excelFile" accept=".xlsx, .xls" onchange="handleExcel(this)">
-                        <p id="excelStatus" style="font-size:0.8rem; color:var(--neon-blue); margin-top:8px;">尚未讀取檔案</p>
+                    </div>
+
+                    <div id="ui-manual" style="display:none;">
+                        <textarea id="manualList" placeholder="每行輸入一個名字..."></textarea>
                     </div>
                 </div>
             </div>
 
             <div class="setup-card full-col">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    <h2 style="margin:0;">歷史紀錄與資料管理</h2>
+                    <h2>紀錄與管理</h2>
                     <div style="display:flex; gap:10px;">
-                        <button onclick="exportResults()" style="background:var(--neon-blue); border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-weight:bold; color:black;">匯出 Excel</button>
-                        <button onclick="clearAllData()" style="background:none; border:1px solid var(--neon-pink); color:var(--neon-pink); padding:8px 15px; border-radius:5px; cursor:pointer;">全面重設系統</button>
+                        <button onclick="exportResults()" style="background:var(--neon-blue); color:black; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-weight:bold;">匯出清單</button>
+                        <button onclick="clearAllData()" style="background:none; border:1px solid var(--neon-pink); color:var(--neon-pink); padding:8px 15px; border-radius:5px; cursor:pointer;">完全重設</button>
                     </div>
                 </div>
-                <div id="setup-history-container" style="max-height: 250px; overflow-y: auto; background: rgba(0,0,0,0.3); border-radius: 15px; padding: 15px;">
-                    </div>
+                <div id="setup-history-container" style="max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.3); border-radius: 15px; padding: 15px;"></div>
             </div>
 
-            <button class="full-col" style="padding:22px; background:linear-gradient(45deg, var(--neon-blue), #0077ff); border:none; border-radius:15px; font-size:1.6rem; font-weight:bold; cursor:pointer; color:white; margin-top:10px;" onclick="enterStage()">揭曉名單並進入抽獎舞台</button>
+            <button class="full-col" style="padding:22px; background:linear-gradient(45deg, var(--neon-blue), #0077ff); color:white; border:none; border-radius:15px; font-size:1.6rem; font-weight:bold; cursor:pointer;" onclick="enterStage()">進入舞台</button>
         </div>
     </section>
 
     <section id="stage-view" class="view">
-        <button class="btn-back" onclick="exitStage()">◀ 重設並返回設定</button>
-        
+        <button class="btn-back" onclick="exitStage()">◀ 返回設定</button>
         <div class="main-stage">
-            <div style="text-align:center;">
-                <p style="color: var(--neon-blue); letter-spacing: 5px; margin-bottom: 10px;">PRO DRAWING SYSTEM</p>
-                <h2 id="display-prize" class="prize-name">PRIZE</h2>
-            </div>
-
+            <h2 id="display-prize" class="prize-name">PRIZE</h2>
             <div class="monitor">
                 <div id="rolling-area" class="rolling-text">READY</div>
                 <div class="progress-bar-container" id="progressBar"><div id="progress-fill"></div></div>
             </div>
-
             <button id="mainBtn" class="btn-draw" onclick="startAutoDraw()">START</button>
         </div>
-
         <aside class="stage-history">
             <div class="history-title">WINNERS LOG</div>
             <div id="stage-history-list" class="history-list"></div>
@@ -154,104 +169,83 @@
 
     <div class="modal-overlay" id="decisionModal">
         <div class="modal">
-            <h2 style="color:var(--gold)">WINNER! 恭喜中獎</h2>
+            <h2 style="color:var(--gold)">抽中名單</h2>
             <div id="modalWinnerList" class="modal-winner"></div>
-            <p style="color:#aaa; font-size: 1.1rem; line-height: 1.6;">確認領獎後，號碼將存入歷史紀錄<br>並從抽獎池中【移除】</p>
-            <div style="margin-top: 35px;">
-                <button class="btn-confirm" onclick="finalizeDraw(true)">確認領獎 (存入紀錄)</button>
-                <button class="btn-cancel" onclick="finalizeDraw(false)">作廢/試抽 (保留號碼)</button>
+            <div class="modal-btns">
+                <button class="btn-m btn-m-confirm" onclick="finalizeDraw('confirm')">確認領獎 (移除)</button>
+                <button class="btn-m btn-m-absent" onclick="finalizeDraw('absent')">缺席 (移除並註記)</button>
+                <button class="btn-m btn-m-cancel" onclick="finalizeDraw('cancel')">作廢重抽 (保留)</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- 核心資料狀態 ---
         let excelData = [];
-        let winnerRecords = []; // {時間, 獎項, winner}
+        let records = []; 
         let currentPool = [];
         let isRolling = false;
         let rollTimer = null;
-        let lastDrawnWinners = [];
+        let lastWinners = [];
 
-        // 1. UI 切換邏輯
         function toggleModeUI() {
-            const mode = document.getElementById('mode').value;
-            document.getElementById('ui-number').style.display = (mode === 'number') ? 'flex' : 'none';
-            document.getElementById('ui-excel').style.display = (mode === 'excel') ? 'block' : 'none';
+            const m = document.getElementById('mode').value;
+            document.getElementById('ui-number').style.display = m==='number'?'flex':'none';
+            document.getElementById('ui-excel').style.display = m==='excel'?'block':'none';
+            document.getElementById('ui-manual').style.display = m==='manual'?'block':'none';
         }
 
-        // 2. Excel 讀取
         function handleExcel(input) {
-            const file = input.files[0];
-            if (!file) return;
             const reader = new FileReader();
             reader.onload = (e) => {
-                const workbook = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
-                excelData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {header: 1}).flat().filter(v => v);
-                document.getElementById('excelStatus').innerText = `已載入名單共 ${excelData.length} 人`;
+                const wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
+                excelData = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {header: 1}).flat().filter(v => v);
+                alert("已載入 " + excelData.length + " 筆");
             };
-            reader.readAsArrayBuffer(file);
+            reader.readAsArrayBuffer(input.files[0]);
         }
 
-        // 3. 進入抽獎舞台
         function enterStage() {
             const mode = document.getElementById('mode').value;
-            let baseList = [];
-
-            if (mode === 'number') {
-                const min = +document.getElementById('minNum').value;
-                const max = +document.getElementById('maxNum').value;
-                if (isNaN(min) || isNaN(max) || min >= max) return alert("請輸入有效的數字範圍！");
-                for (let i = min; i <= max; i++) baseList.push(i.toString());
+            let list = [];
+            if(mode==='number') {
+                for(let i=+document.getElementById('minNum').value; i<=+document.getElementById('maxNum').value; i++) list.push(i.toString());
+            } else if(mode==='excel') {
+                list = [...excelData];
             } else {
-                if (excelData.length === 0) return alert("請先上傳 Excel 檔案！");
-                baseList = [...excelData];
+                list = document.getElementById('manualList').value.split('\n').map(v=>v.trim()).filter(v=>v);
             }
 
-            // 過濾已中獎者
-            const alreadyWon = winnerRecords.map(r => r.winner);
-            currentPool = baseList.filter(p => !alreadyWon.includes(p));
+            const removed = records.map(r => r.winner);
+            currentPool = list.filter(p => !removed.includes(p));
 
-            const batch = +document.getElementById('batchCount').value;
-            if (currentPool.length < batch) return alert(`剩餘名單不足！(剩餘：${currentPool.length} 人)`);
+            if(currentPool.length < +document.getElementById('batchCount').value) return alert("人數不足！");
 
-            // 更新介面
             document.getElementById('display-prize').innerText = document.getElementById('prizeName').value;
             document.getElementById('rolling-area').innerText = "READY";
-            document.getElementById('rolling-area').classList.remove('winner-active');
-            
             document.getElementById('setup-view').classList.remove('active');
             document.getElementById('stage-view').classList.add('active');
-            refreshHistoryUI();
+            refreshUI();
         }
 
-        // 4. 返回設定頁面
         function exitStage() {
-            if (isRolling) return;
+            if(isRolling) return;
             document.getElementById('stage-view').classList.remove('active');
             document.getElementById('setup-view').classList.add('active');
-            refreshHistoryUI();
         }
 
-        // 5. 自動抽獎邏輯 (3秒自動停止)
         function startAutoDraw() {
-            if (isRolling) return;
+            if(isRolling) return;
             isRolling = true;
             document.getElementById('mainBtn').disabled = true;
             document.getElementById('progressBar').style.display = 'block';
-            
-            const batch = +document.getElementById('batchCount').value;
+            const count = +document.getElementById('batchCount').value;
 
-            // 隨機跳動動畫
             rollTimer = setInterval(() => {
-                let temp = [];
-                for(let i=0; i<batch; i++) temp.push(currentPool[Math.floor(Math.random() * currentPool.length)]);
-                const el = document.getElementById('rolling-area');
-                el.innerText = temp.join('  ');
-                el.style.fontSize = batch > 3 ? '4.5rem' : '8rem';
+                let t = [];
+                for(let i=0; i<count; i++) t.push(currentPool[Math.floor(Math.random()*currentPool.length)]);
+                document.getElementById('rolling-area').innerText = t.join('  ');
             }, 60);
 
-            // 自動定時器
             anime({
                 targets: '#progress-fill',
                 width: '100%',
@@ -264,117 +258,64 @@
             });
         }
 
-        // 6. 揭曉結果
         function executeResult() {
             document.getElementById('progress-fill').style.width = '0%';
             document.getElementById('progressBar').style.display = 'none';
-            
-            const batch = +document.getElementById('batchCount').value;
-            lastDrawnWinners = [];
+            const count = +document.getElementById('batchCount').value;
+            lastWinners = [];
             let tempPool = [...currentPool];
-            
-            for(let i=0; i<batch; i++) {
-                const idx = Math.floor(Math.random() * tempPool.length);
-                lastDrawnWinners.push(tempPool.splice(idx, 1)[0]);
+            for(let i=0; i<count; i++) {
+                const idx = Math.floor(Math.random()*tempPool.length);
+                lastWinners.push(tempPool.splice(idx, 1)[0]);
             }
+            document.getElementById('rolling-area').innerText = lastWinners.join('  ');
+            document.getElementById('rolling-area').classList.add('winner-active');
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
 
-            const el = document.getElementById('rolling-area');
-            el.innerText = lastDrawnWinners.join('  ');
-            el.classList.add('winner-active');
-            
-            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
-
-            // 顯示決策視窗
             setTimeout(() => {
-                document.getElementById('modalWinnerList').innerText = lastDrawnWinners.join(', ');
+                document.getElementById('modalWinnerList').innerText = lastWinners.join(', ');
                 document.getElementById('decisionModal').style.display = 'flex';
             }, 1000);
         }
 
-        // 7. 決策處理 (移除或保留)
-        function finalizeDraw(isConfirmed) {
-            if (isConfirmed) {
-                const prize = document.getElementById('prizeName').value;
-                lastDrawnWinners.forEach(w => {
-                    winnerRecords.push({
-                        時間: new Date().toLocaleTimeString(),
-                        獎項: prize,
-                        winner: w
-                    });
+        function finalizeDraw(type) {
+            if (type !== 'cancel') {
+                const pName = document.getElementById('prizeName').value;
+                const status = (type === 'confirm') ? '中獎' : '缺席';
+                lastWinners.forEach(w => {
+                    records.push({ 時間: new Date().toLocaleTimeString(), 獎項: pName, winner: w, 狀態: status });
                     currentPool = currentPool.filter(p => p !== w);
                 });
             }
-            
             document.getElementById('decisionModal').style.display = 'none';
             document.getElementById('mainBtn').disabled = false;
             isRolling = false;
-            refreshHistoryUI();
+            document.getElementById('rolling-area').classList.remove('winner-active');
+            refreshUI();
         }
 
-        // 8. 刷新歷史紀錄 UI
-        function refreshHistoryUI() {
-            // A. 舞台側邊
-            const stageHist = document.getElementById('stage-history-list');
-            stageHist.innerHTML = winnerRecords.slice().reverse().map(r => `
-                <div class="history-item">
-                    <div style="font-size:0.7rem; color:#888;">${r.獎項}</div>
-                    <div style="color:var(--gold); font-weight:bold; font-size:1.1rem; margin-top:4px;">${r.winner}</div>
+        function refreshUI() {
+            document.getElementById('stage-history-list').innerHTML = records.slice().reverse().map(r => `
+                <div class="history-item ${r.狀態==='缺席'?'status-absent':''}">
+                    <div style="font-size:0.7rem;">${r.獎項} - ${r.狀態}</div>
+                    <div style="font-weight:bold; color:${r.狀態==='缺席'?'var(--absent-red)':'var(--gold)'}">${r.winner}</div>
                 </div>
             `).join('');
 
-            // B. 後台表格
-            const setupHist = document.getElementById('setup-history-container');
-            if (winnerRecords.length === 0) {
-                setupHist.innerHTML = `<p style="color:#555; text-align:center;">暫無中獎資料</p>`;
-            } else {
-                setupHist.innerHTML = `
-                    <table>
-                        <thead><tr><th>時間</th><th>獎項</th><th>中獎者</th></tr></thead>
-                        <tbody>
-                            ${winnerRecords.slice().reverse().map(r => `
-                                <tr><td>${r.時間}</td><td>${r.獎項}</td><td style="color:var(--gold); font-weight:bold;">${r.winner}</td></tr>
-                            `).join('')}
-                        </tbody>
-                    </table>`;
-            }
+            const setupTable = document.getElementById('setup-history-container');
+            setupTable.innerHTML = records.length ? `<table><thead><tr><th>時間</th><th>獎項</th><th>名單</th><th>狀態</th></tr></thead><tbody>
+                ${records.slice().reverse().map(r => `<tr><td>${r.時間}</td><td>${r.獎項}</td><td>${r.winner}</td><td class="${r.狀態==='缺席'?'text-absent':''}">${r.狀態}</td></tr>`).join('')}
+            </tbody></table>` : `<p style="text-align:center; color:#555;">暫無紀錄</p>`;
         }
 
-        // 9. 匯出 Excel
-        function exportResults() {
-            if (winnerRecords.length === 0) return alert("目前沒有資料可以匯出。");
-            const ws = XLSX.utils.json_to_sheet(winnerRecords);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "中獎名單");
-            XLSX.writeFile(wb, `抽獎結果_${new Date().getTime()}.xlsx`);
-        }
-
-        // 10. 全面清空
         function clearAllData() {
-            if (confirm("確定要【全面清空】所有資料嗎？這將抹除所有名單、中獎歷史與當前設定。")) {
-                winnerRecords = [];
-                excelData = [];
-                currentPool = [];
-                lastDrawnWinners = [];
-                
-                // 重設 UI
-                document.getElementById('prizeName').value = "特等獎 - 旗艦智慧手機";
-                document.getElementById('batchCount').value = "1";
-                document.getElementById('minNum').value = "1";
-                document.getElementById('maxNum').value = "500";
-                document.getElementById('excelFile').value = "";
-                document.getElementById('excelStatus').innerText = "尚未讀取檔案";
-                
-                refreshHistoryUI();
-                alert("系統已完全重設。");
-            }
+            if(confirm("重設所有資料？")) { records=[]; excelData=[]; document.getElementById('manualList').value=""; refreshUI(); }
         }
 
-        // 鍵盤支援 (空白鍵抽獎)
-        document.addEventListener('keydown', e => {
-            if(e.code === 'Space' && document.getElementById('stage-view').classList.contains('active')) {
-                startAutoDraw();
-            }
-        });
+        function exportResults() {
+            if(!records.length) return alert("無資料");
+            XLSX.writeFile(XLSX.utils.book_new().appendChild(XLSX.utils.json_to_sheet(records)), "抽獎紀錄.xlsx");
+        }
     </script>
 </body>
 </html>
