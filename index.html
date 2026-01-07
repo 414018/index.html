@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PRO-LEVEL 抽獎系統 - 旗艦正式版</title>
+    <title>PRO-LEVEL 抽獎系統 - 極簡純淨版</title>
     
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -20,7 +20,14 @@
             --card-bg: rgba(255, 255, 255, 0.05);
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        /* 核心修正：全球移除游標、外框、以及防止長按選取 */
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            caret-color: transparent !important; /* 隱藏閃爍游標 */
+            outline: none !important;            /* 隱藏點擊藍框 */
+        }
+        
         body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-dark); color: white; margin: 0; overflow: hidden; height: 100vh; }
 
         .view { display: none; height: 100vh; width: 100vw; padding: 20px; }
@@ -35,14 +42,30 @@
         
         h1, h2 { font-family: 'Orbitron'; color: var(--neon-blue); margin-top: 0; letter-spacing: 2px; text-transform: uppercase; }
         h1 { font-size: 1.8rem; margin-bottom: 10px; }
-        h2 { font-size: 1.1rem; margin-bottom: 15px; border-left: 4px solid var(--neon-blue); padding-left: 10px; }
         
-        input, select, textarea { background: rgba(0,0,0,0.5); border: 1px solid #444; color: white; padding: 12px; border-radius: 8px; width: 100%; font-size: 1rem; }
+        /* 修正重點：移除 h2 左側那個長得像游標的藍色條狀 border */
+        h2 { 
+            font-size: 1.1rem; 
+            margin-bottom: 15px; 
+            border-left: none !important; /* 徹底拔除裝飾線 */
+            padding-left: 0; 
+        }
+        
+        input, select, textarea { 
+            background: rgba(0,0,0,0.5); 
+            border: 1px solid #444; 
+            color: white; 
+            padding: 12px; 
+            border-radius: 8px; 
+            width: 100%; 
+            font-size: 1rem;
+            box-shadow: none !important;
+            -webkit-appearance: none; /* 防止 iOS 預設樣式干擾 */
+        }
         label { font-size: 0.85rem; color: #888; margin-bottom: 8px; display: block; }
 
-        /* 關鍵修正：將數字框完整包含在容器內 */
         .range-container {
-            display: flex; /* 預設為 flex 配合 toggleModeUI */
+            display: flex; 
             flex-direction: row;
             align-items: center;
             justify-content: center;
@@ -69,7 +92,6 @@
         .rolling-text { font-family: 'Orbitron'; font-size: 8rem; font-weight: 900; text-align: center; }
         .winner-active { color: var(--gold); text-shadow: 0 0 50px var(--gold); transform: scale(1.1); }
 
-        /* 歷史榜單 */
         .stage-history { background: rgba(255,255,255,0.02); border-left: 1px solid #222; padding: 20px; display: flex; flex-direction: column; }
         .history-title { font-family: 'Orbitron'; color: var(--neon-pink); font-size: 1.1rem; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 15px; }
         .history-list { flex: 1; overflow-y: auto; }
@@ -80,7 +102,6 @@
 
         .btn-draw { padding: 20px 80px; font-size: 2.2rem; border-radius: 100px; border: none; background: var(--neon-pink); color: white; font-weight: 900; cursor: pointer; box-shadow: 0 0 40px rgba(255,0,85,0.4); font-family: 'Orbitron'; }
 
-        /* 彈窗 */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); backdrop-filter: blur(15px); display: none; align-items: center; justify-content: center; z-index: 9999; }
         .modal { background: #1a1b26; border: 2px solid var(--gold); padding: 40px; border-radius: 30px; text-align: center; max-width: 550px; width: 90%; }
         .modal-winner { font-size: 4rem; font-weight: 900; color: white; margin: 20px 0; font-family: 'Orbitron'; }
@@ -145,7 +166,7 @@
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <h2>歷史紀錄</h2>
                     <div style="display:flex; gap:10px;">
-                        <button onclick="exportResults()" style="background:var(--neon-blue); border:none; padding:5px 12px; border-radius:5px; font-weight:bold; cursor:pointer;">匯出Excel</button>
+                        <button onclick="exportResults()" style="background:var(--neon-blue); border:none; padding:5px 12px; border-radius:5px; font-weight:bold; cursor:pointer; color:black;">匯出Excel</button>
                         <button onclick="clearAllData()" style="background:var(--neon-pink); color:white; border:none; padding:5px 12px; border-radius:5px; font-weight:bold; cursor:pointer;">重設系統</button>
                     </div>
                 </div>
@@ -194,7 +215,6 @@
 
         function toggleModeUI() {
             const m = document.getElementById('mode').value;
-            // 關鍵邏輯：切換顯示模式，確保只有選中的會出現
             document.getElementById('ui-number').style.display = (m === 'number') ? 'flex' : 'none';
             document.getElementById('ui-excel').style.display = (m === 'excel') ? 'block' : 'none';
             document.getElementById('ui-manual').style.display = (m === 'manual') ? 'block' : 'none';
@@ -205,7 +225,7 @@
             reader.onload = (e) => {
                 const wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
                 excelData = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {header: 1}).flat().filter(v => v);
-                alert("已載入 " + excelData.length + " 筆名單");
+                alert("已成功讀取 " + excelData.length + " 位人員名單");
             };
             reader.readAsArrayBuffer(input.files[0]);
         }
@@ -224,7 +244,7 @@
             const removed = records.map(r => r.winner);
             currentPool = list.filter(p => !removed.includes(p));
 
-            if(currentPool.length < +document.getElementById('batchCount').value) return alert("可用人數不足！");
+            if(currentPool.length < +document.getElementById('batchCount').value) return alert("可用人數不足以進行本次抽獎！");
 
             document.getElementById('display-prize').innerText = document.getElementById('prizeName').value;
             document.getElementById('rolling-area').innerText = "READY";
@@ -318,11 +338,11 @@
         }
 
         function clearAllData() {
-            if(confirm("確定重設所有資料與紀錄？")) { records=[]; excelData=[]; refreshUI(); }
+            if(confirm("確定重設所有資料與紀錄？這將清空目前載入的名單。")) { records=[]; excelData=[]; refreshUI(); }
         }
 
         function exportResults() {
-            if(!records.length) return alert("無資料可匯出");
+            if(!records.length) return alert("目前沒有中獎紀錄可供匯出。");
             const ws = XLSX.utils.json_to_sheet(records);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "抽獎紀錄");
