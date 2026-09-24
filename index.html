@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THHS - 網路架設丙級術科極致運算核心</title>
+    <title>THHS - 網路架設丙級術科極致運算核心 (v4.5 Updated)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
@@ -29,9 +29,9 @@
             -webkit-touch-callout: none !important;
         }
         .tech-card {
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border: 1px solid rgba(51, 65, 85, 0.6);
             box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.5);
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -91,7 +91,7 @@
                 <div>
                     <h1 class="text-xs font-bold tracking-tight text-white flex items-center gap-2">
                         THHS <span class="text-slate-400 font-normal">/ 網路架設丙級術科</span>
-                        <span class="text-[9px] bg-blue-500/10 text-blue-400 font-mono px-2 py-0.5 rounded border border-blue-500/20">IP CALCULATOR</span>
+                        <span class="text-[9px] bg-blue-500/10 text-blue-400 font-mono px-2 py-0.5 rounded border border-blue-500/20">v4.5 UPDATED</span>
                     </h1>
                 </div>
             </div>
@@ -110,7 +110,7 @@
             <div class="tech-card p-8 rounded-3xl text-center space-y-6 relative overflow-hidden">
                 <div class="inline-flex items-center gap-2 text-xs font-mono font-medium text-blue-400 bg-blue-500/10 px-3.5 py-1 rounded-full border border-blue-500/20">
                     <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-                    CLASS C NETWORK TECHNICIAN EXAM CORE
+                    CLASS C NETWORK TECHNICIAN EXAM CORE (2026 EDITION)
                 </div>
 
                 <div class="space-y-2 max-w-2xl mx-auto">
@@ -118,7 +118,7 @@
                         網路架設丙級 <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">IP 子網路演算系統</span>
                     </h2>
                     <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                        專為檢定設計。提供動態亮燈分區、解題公式演算與一鍵複製答案功能。
+                        系統已全面更新至 v4.5 版本。提供動態亮燈分區、解題公式演算與一鍵複製答案功能。
                     </p>
                 </div>
 
@@ -130,7 +130,7 @@
                     </div>
                     <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 text-center">
                         <span class="text-[10px] text-slate-400 font-mono font-bold uppercase block">STATUS 狀態</span>
-                        <span class="text-xs font-bold text-indigo-300 font-mono mt-0.5 block">🟢 核心運行中</span>
+                        <span class="text-xs font-bold text-indigo-300 font-mono mt-0.5 block">🟢 核心運行中 (v4.5)</span>
                     </div>
                 </div>
 
@@ -150,7 +150,7 @@
                         </h3>
                         <p class="text-[11px] text-slate-400 mt-0.5">打開網頁即可複習，無需手算快速比對</p>
                     </div>
-                    <span class="text-[10px] bg-blue-500/10 text-blue-400 font-mono px-2 py-1 rounded border border-blue-500/20">丙級檢定標準</span>
+                    <span class="text-[10px] bg-blue-500/10 text-blue-400 font-mono px-2 py-1 rounded border border-blue-500/20">檢定標準</span>
                 </div>
 
                 <div class="overflow-x-auto">
@@ -209,7 +209,7 @@
 
             <div class="tech-card p-5 rounded-2xl space-y-4">
                 <div class="border-b border-slate-800 pb-2.5 flex items-center justify-between">
-                    <h2 class="text-xs font-bold text-slate-200 uppercase tracking-wider font-mono">網路參數配置面板</h2>
+                    <h2 class="text-xs font-bold text-slate-200 uppercase tracking-wider font-mono">網路參數配置面板 (v4.5)</h2>
                     <span class="text-xs text-slate-500 font-mono">CIDR: /24 - /27</span>
                 </div>
                 
@@ -244,7 +244,7 @@
     </main>
 
     <footer class="text-center py-5 text-[11px] text-slate-500 font-mono border-t border-slate-900 bg-[#020408] relative z-10">
-        <p>THHS Network Setup Technician (Class C) Calculation Core &copy; 2026</p>
+        <p>THHS Network Setup Technician (Class C) Calculation Core v4.5 &copy; 2026</p>
     </footer>
 
     <script>
@@ -295,7 +295,7 @@
 
         function copyAnswerToClipboard() {
             if (!currentCalculatedResult.ip) return;
-            const textToCopy = `[丙級術科答案]\n目標 IP: ${currentCalculatedResult.ip}\n子網路遮罩: ${currentCalculatedResult.mask}`;
+            const textToCopy = `[THHS 丙級術科解答 v4.5]\n目標 IP: ${currentCalculatedResult.ip}\n子網路遮罩: ${currentCalculatedResult.mask}`;
             
             navigator.clipboard.writeText(textToCopy).then(() => {
                 const copyBtn = document.getElementById('btnCopyResult');
@@ -357,7 +357,7 @@
                 let broadcastOctet = subnetNetworkOctet + blockSize - 1;
                 let isServerSubnet = (octet4 >= subnetNetworkOctet && octet4 <= broadcastOctet);
 
-                // 核心亮燈特效 (neon-highlight)
+                // 亮燈特效 (neon-highlight)
                 let rowStyle = isServerSubnet 
                     ? "neon-highlight text-blue-100 font-extrabold border-l-4 border-blue-400 text-xs sm:text-sm" 
                     : "bg-slate-900/40 text-slate-300 hover:bg-slate-900/80 text-xs";
@@ -397,7 +397,7 @@
                     <div class="flex items-center justify-between border-b border-blue-500/30 pb-3">
                         <div class="flex items-center gap-2 font-bold font-mono">
                             <span class="p-1 bg-blue-500/20 rounded-lg text-blue-400 text-sm">💡</span>
-                            <span class="text-white text-sm tracking-wide">三步驟解題過程與原理極致解析</span>
+                            <span class="text-white text-sm tracking-wide">三步驟解題過程與原理極致解析 (v4.5)</span>
                         </div>
                         <span class="text-[10px] bg-blue-500/20 text-blue-300 px-2.5 py-1 rounded-full border border-blue-500/30 font-mono font-bold uppercase">公式速算</span>
                     </div>
