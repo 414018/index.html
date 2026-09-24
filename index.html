@@ -122,7 +122,7 @@
                     </p>
                 </div>
 
-                <!-- 統計面板（已移除演算次數） -->
+                <!-- 統計面板 -->
                 <div class="grid grid-cols-2 gap-3 max-w-md mx-auto pt-1">
                     <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 text-center">
                         <span class="text-[10px] text-slate-400 font-mono font-bold uppercase block">👥 目前在線人數</span>
@@ -248,46 +248,26 @@
     </footer>
 
     <script>
-        /* -------------------------------------------------------------
-         * 高級防拷 / 防除錯 (Advanced Copy & DevTools Protection)
-         * ------------------------------------------------------------- */
+        /* 防拷防除錯保護 */
         document.addEventListener('contextmenu', e => e.preventDefault());
-
         document.addEventListener('keydown', function(e) {
-            if (e.keyCode === 123) {
-                e.preventDefault();
-                return false;
-            }
-            if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
-                e.preventDefault();
-                return false;
-            }
-            if (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83 || e.keyCode === 67 || e.keyCode === 65 || e.keyCode === 88)) {
-                e.preventDefault();
-                return false;
-            }
+            if (e.keyCode === 123) return false;
+            if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) return false;
+            if (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83 || e.keyCode === 67 || e.keyCode === 65 || e.keyCode === 88)) return false;
         });
-
         document.addEventListener('dragstart', e => e.preventDefault());
         document.addEventListener('selectstart', e => e.preventDefault());
 
-        /* -------------------------------------------------------------
-         * 系統數據與計算邏輯
-         * ------------------------------------------------------------- */
         let currentCalculatedResult = {};
 
-        /* 實時在線人數動態顯示 */
         function initOnlineUsers() {
             const onlineEl = document.getElementById('onlineUserCount');
             if (!onlineEl) return;
-            
             let baseOnline = 1;
             onlineEl.innerText = baseOnline + ' 人';
-
             setInterval(() => {
                 let randomOffset = Math.floor(Math.random() * 3);
-                let currentDisplay = baseOnline + randomOffset;
-                onlineEl.innerText = currentDisplay + ' 人';
+                onlineEl.innerText = (baseOnline + randomOffset) + ' 人';
             }, 8000);
         }
 
@@ -392,9 +372,10 @@
             }
 
             solutionOutput.innerHTML = `
+                <!-- 頂部重點答案區 -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-pop-in">
                     <div class="p-5 bg-slate-900/80 rounded-xl border border-slate-800 flex flex-col justify-center space-y-1">
-                        <span class="text-xs text-slate-400 font-bold uppercase font-mono tracking-wider">子網路遮罩 (Subnet Mask)</span>
+                        <span class="text-xs text-slate-400 font-bold uppercase font-mono tracking-wider">子網路遮罩 (SUBNET MASK)</span>
                         <span class="text-xl font-bold text-slate-100 font-mono animate-answer-glow">${subnetMask}</span>
                     </div>
                     <div class="p-5 bg-gradient-to-br from-blue-950/90 to-indigo-950/90 rounded-xl border border-blue-500/70 shadow-xl shadow-blue-500/20 relative overflow-hidden flex flex-col justify-between space-y-2 animate-pop-in">
@@ -410,6 +391,59 @@
                     </div>
                 </div>
 
+                <!-- 視覺強化：三步驟計算過程與原理解析 -->
+                <div class="p-5 bg-slate-900/90 rounded-2xl border border-blue-500/40 space-y-4 shadow-lg shadow-blue-500/10 animate-pop-in">
+                    <div class="flex items-center justify-between border-b border-blue-500/30 pb-3">
+                        <div class="flex items-center gap-2 font-bold font-mono">
+                            <span class="p-1 bg-blue-500/20 rounded-lg text-blue-400 text-sm">💡</span>
+                            <span class="text-white text-sm tracking-wide">三步驟解題過程與原理極致解析</span>
+                        </div>
+                        <span class="text-[10px] bg-blue-500/20 text-blue-300 px-2.5 py-1 rounded-full border border-blue-500/30 font-mono font-bold uppercase">公式速算</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+                        <!-- 步驟 1 -->
+                        <div class="p-4 bg-slate-950/80 rounded-xl border border-slate-800/80 space-y-2.5 hover:border-blue-500/40 transition">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-blue-400 font-mono">步驟 1：確認遮罩與區塊大小</span>
+                                <span class="text-[9px] bg-blue-500/10 text-blue-300 px-2 py-0.5 rounded font-mono">Block Size</span>
+                            </div>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                選擇 <span class="text-blue-300 font-mono font-bold">/${cidr}</span> 遮罩 (<span class="text-white font-mono font-semibold">${subnetMask}</span>)，代表將 256 個 IP 切分為 <span class="text-yellow-300 font-bold font-mono">${numSubnets}</span> 個分區，每區包含 <span class="text-emerald-400 font-bold font-mono">${blockSize}</span> 個 IP。
+                            </p>
+                        </div>
+
+                        <!-- 步驟 2 -->
+                        <div class="p-4 bg-slate-950/80 rounded-xl border border-slate-800/80 space-y-2.5 hover:border-blue-500/40 transition">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-blue-400 font-mono">步驟 2：尋找伺服器基準點</span>
+                                <span class="text-[9px] bg-blue-500/10 text-blue-300 px-2 py-0.5 rounded font-mono">Network ID</span>
+                            </div>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                伺服器末碼為 <span class="text-yellow-300 font-bold font-mono">.${octet4}</span>，落在 <span class="text-white font-mono font-semibold">${networkIdOctet} ~ ${networkIdOctet + blockSize - 1}</span> 區塊，故基準點 Network ID 為 <span class="text-emerald-400 font-bold font-mono">${networkIdOctet}</span>。
+                            </p>
+                        </div>
+
+                        <!-- 步驟 3 -->
+                        <div class="p-4 bg-slate-950/80 rounded-xl border border-slate-800/80 space-y-2.5 hover:border-blue-500/40 transition">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-blue-400 font-mono">步驟 3：代入座號推導 IP</span>
+                                <span class="text-[9px] bg-blue-500/10 text-blue-300 px-2 py-0.5 rounded font-mono">Target IP</span>
+                            </div>
+                            <div class="p-2.5 bg-blue-950/50 rounded-lg border border-blue-500/30 text-center font-mono">
+                                <div class="text-[10px] text-slate-400 mb-1">以基準點加上考場座號 (${seatNumber} 號)</div>
+                                <div class="text-sm font-extrabold text-white">
+                                    ${networkIdOctet} + ${seatNumber} = <span class="text-yellow-300">${targetHostOctet}</span>
+                                </div>
+                            </div>
+                            <div class="text-center font-mono text-xs text-blue-300 font-bold">
+                                👉 目標 IP: <span class="text-emerald-400 font-extrabold">${calculatedIp}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 子網路分區對照表 -->
                 <div class="bg-slate-900/60 rounded-xl border border-slate-800 overflow-hidden shadow-inner animate-pop-in">
                     <div class="p-3 bg-slate-900/90 border-b border-slate-800 flex justify-between items-center text-xs">
                         <span class="font-bold text-slate-200 uppercase font-mono tracking-wider">子網路分區對照表</span>
@@ -420,9 +454,9 @@
                             <thead>
                                 <tr class="bg-slate-950/80 text-slate-400 text-[11px] uppercase border-b border-slate-800 font-mono">
                                     <th class="py-2.5 px-3.5 font-bold">分區</th>
-                                    <th class="py-2.5 px-3.5 font-bold">網路位址 (Network ID)</th>
+                                    <th class="py-2.5 px-3.5 font-bold">網路位址 (NETWORK ID)</th>
                                     <th class="py-2.5 px-3.5 font-bold">可用主機 IP 範圍</th>
-                                    <th class="py-2.5 px-3.5 font-bold">廣播位址 (Broadcast)</th>
+                                    <th class="py-2.5 px-3.5 font-bold">廣播位址 (BROADCAST)</th>
                                 </tr>
                             </thead>
                             <tbody>${tableRowsHtml}</tbody>
