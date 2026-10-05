@@ -292,9 +292,9 @@
                     </div>
                 </div>
 
-                <!-- 右側：作答與計分區 -->
-                <div class="tech-card p-6 rounded-2xl space-y-5 relative">
-                    <div class="flex items-center justify-between mb-2">
+                <!-- 右側：作答、草稿與計分區 -->
+                <div class="tech-card p-6 rounded-2xl space-y-4 relative">
+                    <div class="flex items-center justify-between mb-1">
                         <span class="text-xs font-bold text-slate-300 font-mono">你的解答 (Your Answer)</span>
                         <div class="bg-slate-900/80 border border-slate-700 px-3 py-1 rounded-full text-xs font-mono font-bold flex items-center gap-2 shadow-inner">
                             <span class="text-slate-400">連對 Combo 🔥</span>
@@ -302,6 +302,18 @@
                         </div>
                     </div>
 
+                    <!-- 📝 新增：運算草稿區 -->
+                    <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-700/50 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-bold text-slate-400 font-mono flex items-center gap-1.5">
+                                <span class="text-blue-400">⌨️</span> 運算草稿區 (Scratchpad)
+                            </span>
+                            <button onclick="document.getElementById('testScratchpad').value=''" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded transition shadow-inner">清空</button>
+                        </div>
+                        <textarea id="testScratchpad" rows="2" class="tech-input w-full px-3 py-2 rounded-lg text-xs font-mono text-slate-300 placeholder-slate-600/70 resize-none focus:ring-1 focus:ring-blue-500/50" placeholder="可以在這裡記下中間步驟...&#10;例: 256 / 4 = 64"></textarea>
+                    </div>
+
+                    <!-- 正式作答欄位 -->
                     <div class="space-y-3">
                         <div class="space-y-1.5">
                             <label class="block text-[11px] font-bold text-slate-400 uppercase font-mono">十進位子網路遮罩 (Subnet Mask)</label>
@@ -430,7 +442,7 @@
         document.addEventListener('dragstart', e => e.preventDefault());
         document.addEventListener('selectstart', e => {
             // 允許輸入框被選取
-            if (e.target.tagName === 'INPUT' || e.target.classList.contains('win-input')) {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.classList.contains('win-input')) {
                 return true;
             }
             e.preventDefault();
@@ -563,8 +575,12 @@
         function generateNewQuiz() {
             attemptCount++;
             document.getElementById('quizAttemptCount').innerText = attemptCount;
+            
+            // 📝 清空欄位與草稿區
             document.getElementById('ansMask').value = "";
             document.getElementById('ansIp').value = "";
+            document.getElementById('testScratchpad').value = ""; 
+            
             document.getElementById('quizFeedback').innerHTML = "";
             document.getElementById('quizFeedback').classList.add('hidden');
             
@@ -572,6 +588,7 @@
             document.getElementById('btnNextQuiz').classList.add('hidden');
             document.getElementById('ansMask').disabled = false;
             document.getElementById('ansIp').disabled = false;
+            document.getElementById('testScratchpad').disabled = false;
 
             const cidrList = [24, 25, 26, 27];
             const randomCidr = cidrList[Math.floor(Math.random() * cidrList.length)];
@@ -638,6 +655,7 @@
 
             document.getElementById('ansMask').disabled = true;
             document.getElementById('ansIp').disabled = true;
+            document.getElementById('testScratchpad').disabled = true;
             document.getElementById('btnSubmitQuiz').classList.add('hidden');
             document.getElementById('btnNextQuiz').classList.remove('hidden');
         }
