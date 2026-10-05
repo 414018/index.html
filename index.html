@@ -644,28 +644,55 @@
 
                 ${simBtn}
 
-                <div class="mt-4 p-4 bg-slate-900/90 rounded-2xl border border-blue-500/40 space-y-3 shadow-lg shadow-blue-500/10">
-                    <div class="flex items-center gap-2 font-bold font-mono border-b border-blue-500/30 pb-2">
-                        <span class="p-1 bg-blue-500/20 rounded-lg text-blue-400 text-xs">💡</span>
-                        <span class="text-white text-xs tracking-wide">三步驟解題極致解析</span>
+                <!-- 優化後的教學級三步驟解析 -->
+                <div class="mt-4 p-5 bg-slate-900/90 rounded-2xl border border-blue-500/50 space-y-4 shadow-xl shadow-blue-900/20">
+                    <div class="flex items-center justify-between border-b border-blue-500/30 pb-2.5">
+                        <div class="flex items-center gap-2 font-bold font-mono">
+                            <span class="flex items-center justify-center w-6 h-6 bg-blue-500/20 rounded-lg text-blue-400 text-sm">💡</span>
+                            <span class="text-white text-sm tracking-wide">助教級三步驟邏輯拆解</span>
+                        </div>
+                        <span class="text-[10px] text-blue-400 bg-blue-950/50 px-2 py-0.5 rounded border border-blue-800">STEP-BY-STEP</span>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <div class="p-3 bg-slate-950/80 rounded-xl border border-slate-800/80 space-y-1.5">
-                            <span class="text-[10px] font-bold text-blue-400 font-mono">1：區塊大小</span>
-                            <p class="text-[11px] text-slate-300 leading-relaxed">
-                                /${res.cidr} 遮罩，切分為 ${res.numSubnets} 區，每區包含 <span class="text-emerald-400 font-bold">${res.blockSize}</span> 個 IP。
-                            </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Step 1 -->
+                        <div class="p-4 bg-slate-950/80 rounded-xl border border-slate-700 hover:border-blue-500/50 transition duration-300 relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-1 h-full bg-slate-600 group-hover:bg-blue-500 transition"></div>
+                            <span class="text-[11px] font-bold text-slate-400 font-mono block mb-1">STEP 1：求區塊大小</span>
+                            <h4 class="text-sm font-bold text-blue-300 mb-2">總數 256 ÷ 分區數</h4>
+                            <div class="text-[11px] text-slate-300 leading-relaxed space-y-1.5">
+                                <p>題目給定 <span class="text-white font-bold">/${res.cidr}</span>，代表網路線路被切分為 <span class="text-emerald-400 font-bold">${res.numSubnets}</span> 個網段。</p>
+                                <div class="bg-slate-900 p-1.5 rounded font-mono text-center border border-slate-800 text-white">
+                                    256 ÷ ${res.numSubnets} = <span class="text-emerald-400 font-bold text-xs">${res.blockSize}</span> (IP/區)
+                                </div>
+                            </div>
                         </div>
-                        <div class="p-3 bg-slate-950/80 rounded-xl border border-slate-800/80 space-y-1.5">
-                            <span class="text-[10px] font-bold text-blue-400 font-mono">2：尋找基準點</span>
-                            <p class="text-[11px] text-slate-300 leading-relaxed">
-                                末碼 .${res.octet4} 落在以 <span class="text-emerald-400 font-bold">${res.networkIdOctet}</span> 為起點的區塊中。
-                            </p>
+
+                        <!-- Step 2 -->
+                        <div class="p-4 bg-slate-950/80 rounded-xl border border-slate-700 hover:border-blue-500/50 transition duration-300 relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-1 h-full bg-slate-600 group-hover:bg-blue-500 transition"></div>
+                            <span class="text-[11px] font-bold text-slate-400 font-mono block mb-1">STEP 2：定位基準點</span>
+                            <h4 class="text-sm font-bold text-blue-300 mb-2">伺服器 IP 找網段</h4>
+                            <div class="text-[11px] text-slate-300 leading-relaxed space-y-1.5">
+                                <p>伺服器末碼為 <span class="text-white font-bold">.${res.octet4}</span>。我們用除法來看看它落在哪一區：</p>
+                                <div class="bg-slate-900 p-1.5 rounded font-mono text-center border border-slate-800 text-white flex flex-col gap-1">
+                                    <span>${res.octet4} ÷ ${res.blockSize} = ${Math.floor(res.octet4 / res.blockSize)}...餘數</span>
+                                    <span class="text-emerald-400 border-t border-slate-700 pt-1">基準點(Net ID) = <span class="font-bold text-xs">${res.networkIdOctet}</span></span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="p-3 bg-slate-950/80 rounded-xl border border-slate-800/80 space-y-1.5">
-                            <span class="text-[10px] font-bold text-blue-400 font-mono">3：代入座號</span>
-                            <div class="text-[11px] bg-blue-950/50 p-1.5 rounded border border-blue-500/30 text-center font-mono text-white">
-                                ${res.networkIdOctet} + ${res.seatNumber} = <span class="text-yellow-300 font-bold">${res.targetHostOctet}</span>
+
+                        <!-- Step 3 -->
+                        <div class="p-4 bg-slate-950/80 rounded-xl border border-slate-700 hover:border-yellow-500/50 transition duration-300 relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-1 h-full bg-slate-600 group-hover:bg-yellow-500 transition"></div>
+                            <span class="text-[11px] font-bold text-slate-400 font-mono block mb-1">STEP 3：代入座號</span>
+                            <h4 class="text-sm font-bold text-yellow-300 mb-2">基準點 + 考試座號</h4>
+                            <div class="text-[11px] text-slate-300 leading-relaxed space-y-1.5">
+                                <p>找到基準點後，直接加上你的座號，就是最終要設定的本機 IP：</p>
+                                <div class="bg-blue-950/40 p-2 rounded border border-blue-500/30 text-center font-mono text-white text-xs mt-2 shadow-inner">
+                                    <span class="text-slate-400">Net ID</span> ${res.networkIdOctet} + <span class="text-slate-400">座號</span> ${res.seatNumber} <br>
+                                    <div class="mt-1 text-sm">= <span class="text-yellow-300 font-extrabold">${res.targetHostOctet}</span></div>
+                                </div>
                             </div>
                         </div>
                     </div>
