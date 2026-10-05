@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THHS - 網路架設丙級術科極致運算核心 (Blackout Shield v4.7)</title>
+    <title>THHS - 網路架設丙級術科極致運算核心 (v4.9 + Quiz Center)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
@@ -54,12 +54,13 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
             outline: none;
         }
+        
         /* 截圖直接強制全黑頻幕防護 */
         #blackoutShield {
             position: fixed;
             inset: 0;
             background: #000000;
-            z-index: 99999;
+            z-index: 999999;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -78,6 +79,12 @@
         @media print {
             body { display: none !important; }
         }
+        
+        .win-input {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+        }
+        
         @keyframes pulseGlow {
             0%, 100% { opacity: 0.4; transform: scale(1); }
             50% { opacity: 0.8; transform: scale(1.05); }
@@ -103,7 +110,7 @@
 </head>
 <body class="bg-[#030712] text-slate-100 min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white relative overflow-x-hidden">
 
-    <!-- 偵測到截圖或切換視窗時立刻啟動的「絕對黑頻遮罩」 -->
+    <!-- 絕對黑頻遮罩 -->
     <div id="blackoutShield">
         <div class="text-3xl">🔒</div>
         <div class="text-sm font-bold tracking-widest uppercase">SECURITY BLACKOUT ACTIVE</div>
@@ -122,38 +129,36 @@
                 <div>
                     <h1 class="text-xs font-bold tracking-tight text-white flex items-center gap-2">
                         THHS <span class="text-slate-400 font-normal">/ 網路架設丙級術科</span>
-                        <span class="text-[9px] bg-red-500/10 text-red-400 font-mono px-2 py-0.5 rounded border border-red-500/25">v4.7 BLACKOUT</span>
+                        <span class="text-[9px] bg-red-500/10 text-red-400 font-mono px-2 py-0.5 rounded border border-red-500/25">v4.9 QUIZ CENTER</span>
                     </h1>
                 </div>
             </div>
             
-            <div class="flex items-center gap-2 bg-slate-900/80 p-1 rounded-xl border border-slate-800">
-                <button onclick="switchTab('home')" id="navHome" class="text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer bg-blue-600 text-white shadow-md shadow-blue-500/20">總覽與速查表</button>
-                <button onclick="switchTab('calculator')" id="navCalc" class="text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer text-slate-300 hover:text-white">智慧計算器</button>
+            <div class="flex items-center gap-1.5 sm:gap-2 bg-slate-900/80 p-1 rounded-xl border border-slate-800 overflow-x-auto">
+                <button onclick="switchTab('home')" id="navHome" class="text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer bg-blue-600 text-white shadow-md shadow-blue-500/20 whitespace-nowrap">速查表</button>
+                <button onclick="switchTab('calculator')" id="navCalc" class="text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer text-slate-300 hover:text-white whitespace-nowrap">計算器</button>
+                <button onclick="switchTab('test')" id="navTest" class="text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer text-slate-300 hover:text-white whitespace-nowrap flex items-center gap-1"><span class="text-yellow-400">🔥</span>實戰測驗</button>
             </div>
         </div>
     </header>
 
     <main class="max-w-5xl mx-auto px-4 py-8 flex-grow w-full space-y-6 relative z-10">
 
-        <!-- 導覽頁 -->
+        <!-- ================= 導覽與速查表 ================= -->
         <div id="viewHome" class="space-y-6">
             <div class="tech-card p-8 rounded-3xl text-center space-y-6 relative overflow-hidden">
                 <div class="inline-flex items-center gap-2 text-xs font-mono font-medium text-red-400 bg-red-500/10 px-3.5 py-1 rounded-full border border-red-500/20">
                     <span class="w-2 h-2 rounded-full bg-red-400 animate-pulse"></span>
-                    ANTI-SCREENSHOT BLACKOUT SHIELD ACTIVE
+                    ANTI-SCREENSHOT & EXAM SIMULATOR
                 </div>
-
                 <div class="space-y-2 max-w-2xl mx-auto">
                     <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                         網路架設丙級 <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">IP 子網路演算系統</span>
                     </h2>
                     <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                        系統已升級至 v4.7 版本。具備偵測截圖直接黑頻保護、動態亮燈分區與一鍵複製答案功能。
+                        系統已升級至 v4.9 版本。新增「實戰測驗中心」，可無限刷題練手感！
                     </p>
                 </div>
-
-                <!-- 統計面板 -->
                 <div class="grid grid-cols-2 gap-3 max-w-md mx-auto pt-1">
                     <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 text-center">
                         <span class="text-[10px] text-slate-400 font-mono font-bold uppercase block">👥 目前在線人數</span>
@@ -161,13 +166,15 @@
                     </div>
                     <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 text-center">
                         <span class="text-[10px] text-slate-400 font-mono font-bold uppercase block">STATUS 狀態</span>
-                        <span class="text-xs font-bold text-red-400 font-mono mt-0.5 block">⬛ 黑頻防截圖啟動</span>
+                        <span class="text-xs font-bold text-red-400 font-mono mt-0.5 block">⬛ 防護 & 測驗開啟</span>
                     </div>
                 </div>
-
-                <div class="flex items-center justify-center pt-2">
-                    <button onclick="switchTab('calculator')" class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-8 py-3 rounded-xl shadow-lg shadow-blue-500/25 transition transform hover:scale-105 active:scale-95 cursor-pointer text-xs font-mono tracking-wider flex items-center gap-2">
-                        <span>⚡ 開始手動計算</span> &rarr;
+                <div class="flex items-center justify-center gap-4 pt-2">
+                    <button onclick="switchTab('calculator')" class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-blue-500/25 transition transform hover:scale-105 active:scale-95 cursor-pointer text-xs font-mono tracking-wider flex items-center gap-2">
+                        <span>⚡ 智慧計算器</span>
+                    </button>
+                    <button onclick="switchTab('test')" class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-6 py-3 rounded-xl shadow-lg shadow-yellow-500/25 transition transform hover:scale-105 active:scale-95 cursor-pointer text-xs font-mono tracking-wider flex items-center gap-2">
+                        <span>🔥 進入實戰測驗</span>
                     </button>
                 </div>
             </div>
@@ -179,11 +186,8 @@
                         <h3 class="text-sm font-bold text-white font-mono flex items-center gap-2">
                             <span>📊</span> 考場必背：CIDR /24 ~ /27 常用參數對照表
                         </h3>
-                        <p class="text-[11px] text-slate-400 mt-0.5">打開網頁即可複習，無需手算快速比對</p>
                     </div>
-                    <span class="text-[10px] bg-blue-500/10 text-blue-400 font-mono px-2 py-1 rounded border border-blue-500/20">檢定標準</span>
                 </div>
-
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs font-mono">
                         <thead>
@@ -192,7 +196,6 @@
                                 <th class="py-2.5 px-3">十進位子網路遮罩</th>
                                 <th class="py-2.5 px-3 text-center">切分子網數</th>
                                 <th class="py-2.5 px-3 text-center">區塊大小 (Block Size)</th>
-                                <th class="py-2.5 px-3 text-center">每區可用 IP 數</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-800/60 text-slate-300">
@@ -201,28 +204,24 @@
                                 <td class="py-2.5 px-3">255.255.255.0</td>
                                 <td class="py-2.5 px-3 text-center">1 個區塊</td>
                                 <td class="py-2.5 px-3 text-center font-bold text-slate-100">256</td>
-                                <td class="py-2.5 px-3 text-center text-emerald-400">254 個</td>
                             </tr>
                             <tr class="hover:bg-slate-800/40 transition">
                                 <td class="py-2.5 px-3 font-bold text-blue-400">/25</td>
                                 <td class="py-2.5 px-3">255.255.255.128</td>
                                 <td class="py-2.5 px-3 text-center">2 個區塊</td>
                                 <td class="py-2.5 px-3 text-center font-bold text-slate-100">128</td>
-                                <td class="py-2.5 px-3 text-center text-emerald-400">126 個</td>
                             </tr>
                             <tr class="hover:bg-slate-800/40 transition">
                                 <td class="py-2.5 px-3 font-bold text-blue-400">/26</td>
                                 <td class="py-2.5 px-3">255.255.255.192</td>
                                 <td class="py-2.5 px-3 text-center">4 個區塊</td>
                                 <td class="py-2.5 px-3 text-center font-bold text-slate-100">64</td>
-                                <td class="py-2.5 px-3 text-center text-emerald-400">62 個</td>
                             </tr>
                             <tr class="hover:bg-slate-800/40 transition">
                                 <td class="py-2.5 px-3 font-bold text-blue-400">/27</td>
                                 <td class="py-2.5 px-3">255.255.255.224</td>
                                 <td class="py-2.5 px-3 text-center">8 個區塊</td>
                                 <td class="py-2.5 px-3 text-center font-bold text-slate-100">32</td>
-                                <td class="py-2.5 px-3 text-center text-emerald-400">30 個</td>
                             </tr>
                         </tbody>
                     </table>
@@ -230,20 +229,12 @@
             </div>
         </div>
 
-        <!-- 計算頁區塊 -->
+        <!-- ================= 計算機區塊 ================= -->
         <div id="viewCalculator" class="space-y-5 hidden">
-            <div class="flex items-center justify-between">
-                <button onclick="switchTab('home')" class="text-xs font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 transition cursor-pointer">
-                    &larr; 返回總覽與速查表
-                </button>
-            </div>
-
             <div class="tech-card p-5 rounded-2xl space-y-4">
                 <div class="border-b border-slate-800 pb-2.5 flex items-center justify-between">
-                    <h2 class="text-xs font-bold text-slate-200 uppercase tracking-wider font-mono">網路參數配置面板 (v4.7)</h2>
-                    <span class="text-xs text-slate-500 font-mono">CIDR: /24 - /27</span>
+                    <h2 class="text-xs font-bold text-slate-200 uppercase tracking-wider font-mono">網路參數配置面板 (v4.9)</h2>
                 </div>
-                
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div class="space-y-1.5">
                         <label class="block text-xs font-bold text-slate-300 uppercase font-mono">子網路遮罩 (CIDR)</label>
@@ -254,28 +245,136 @@
                             <option value="27" class="bg-slate-900">/27 (255.255.255.224)</option>
                         </select>
                     </div>
-
                     <div class="space-y-1.5">
                         <label class="block text-xs font-bold text-slate-300 uppercase font-mono">伺服器 IP 位址</label>
                         <input type="text" id="inputServerIp" class="tech-input w-full px-3.5 py-2.5 rounded-xl text-xs font-mono font-semibold" oninput="calculateSubnet()" value="218.216.101.151">
                     </div>
-
                     <div class="space-y-1.5">
                         <label class="block text-xs font-bold text-slate-300 uppercase font-mono">假設考試座號</label>
                         <input type="number" id="inputSeat" class="tech-input w-full px-3.5 py-2.5 rounded-xl text-xs font-mono font-bold text-blue-400" oninput="calculateSubnet()" value="20">
                     </div>
                 </div>
             </div>
-
             <div class="tech-card p-5 rounded-2xl space-y-5">
                 <div id="solutionOutput" class="space-y-5"></div>
             </div>
         </div>
 
+        <!-- ================= 實戰測驗中心 ================= -->
+        <div id="viewTest" class="space-y-5 hidden">
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-pop-in">
+                <!-- 左側：題目區 -->
+                <div class="tech-card p-6 rounded-2xl space-y-5 relative overflow-hidden flex flex-col justify-between border-2 border-yellow-500/40">
+                    <div class="absolute -right-10 -top-10 w-32 h-32 bg-yellow-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                    <div>
+                        <div class="flex items-center justify-between border-b border-slate-700/50 pb-2 mb-4">
+                            <span class="text-xs font-bold text-yellow-400 font-mono tracking-wider flex items-center gap-1.5"><span class="animate-pulse">📝</span> 隨機術科題庫</span>
+                            <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-1 rounded font-mono">第 <span id="quizAttemptCount" class="text-white font-bold">1</span> 題</span>
+                        </div>
+                        <div class="space-y-3 text-sm text-slate-200">
+                            <div class="flex justify-between bg-slate-900/60 px-3 py-2 rounded-lg border border-slate-800">
+                                <span class="text-slate-400">伺服器 IP：</span>
+                                <span class="font-mono font-extrabold text-blue-300 text-base" id="qServerIp">---</span>
+                            </div>
+                            <div class="flex justify-between bg-slate-900/60 px-3 py-2 rounded-lg border border-slate-800">
+                                <span class="text-slate-400">子網路遮罩：</span>
+                                <span class="font-mono font-extrabold text-white text-base" id="qCidr">---</span>
+                            </div>
+                            <div class="flex justify-between bg-slate-900/60 px-3 py-2 rounded-lg border border-slate-800">
+                                <span class="text-slate-400">你的考試座號：</span>
+                                <span class="font-mono font-extrabold text-yellow-300 text-base" id="qSeat">---</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[11px] text-slate-500 font-mono mt-4 text-center">
+                        請在右側填寫你算出的正確解答。
+                    </div>
+                </div>
+
+                <!-- 右側：作答與計分區 -->
+                <div class="tech-card p-6 rounded-2xl space-y-5 relative">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold text-slate-300 font-mono">你的解答 (Your Answer)</span>
+                        <div class="bg-slate-900/80 border border-slate-700 px-3 py-1 rounded-full text-xs font-mono font-bold flex items-center gap-2 shadow-inner">
+                            <span class="text-slate-400">連對 Combo 🔥</span>
+                            <span id="streakCount" class="text-yellow-400 text-base">0</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase font-mono">十進位子網路遮罩 (Subnet Mask)</label>
+                            <input type="text" id="ansMask" class="tech-input w-full px-4 py-2.5 rounded-xl text-sm font-mono font-bold placeholder-slate-600" placeholder="例: 255.255.255.128" autocomplete="off">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase font-mono">你的目標 IP 位址 (Target IP)</label>
+                            <input type="text" id="ansIp" class="tech-input w-full px-4 py-2.5 rounded-xl text-sm font-mono font-bold text-blue-300 placeholder-slate-600" placeholder="例: 192.168.1.50" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <button id="btnSubmitQuiz" onclick="checkQuizAnswer()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3 rounded-xl transition text-sm font-sans cursor-pointer shadow-lg shadow-blue-500/25 mt-2">
+                        送出答案
+                    </button>
+                    <button id="btnNextQuiz" onclick="generateNewQuiz()" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-xl transition text-sm font-sans cursor-pointer hidden mt-2">
+                        挑戰下一題 ➔
+                    </button>
+                </div>
+            </div>
+
+            <!-- 測驗回饋與解析區 -->
+            <div id="quizFeedback" class="hidden"></div>
+        </div>
+
     </main>
 
+    <!-- Windows 考場實境模擬對話框 (計算器專用) -->
+    <div id="examModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[9000] hidden flex items-center justify-center p-4">
+        <div class="bg-[#f0f0f0] text-black w-full max-w-[420px] rounded shadow-2xl border border-gray-400 font-sans text-[12px] cursor-default">
+            <div class="bg-white px-3 py-2 border-b border-gray-300 flex justify-between items-center select-none">
+                <div class="flex gap-2 items-center">
+                    <span class="text-sm">🌐</span>
+                    <h3 class="font-normal text-[13px]">網際網路通訊協定第 4 版 (TCP/IPv4) 內容</h3>
+                </div>
+                <button onclick="closeExamModal()" class="text-gray-500 hover:text-white hover:bg-red-500 px-2 py-0.5 rounded transition">&times;</button>
+            </div>
+            <div class="p-4 space-y-4 select-none">
+                <p class="text-[12px] text-gray-700 leading-tight">如果您的網路支援此功能，您可以取得自動指派的 IP 設定。</p>
+                <div class="space-y-3 pl-2">
+                    <label class="flex items-center gap-2 cursor-pointer text-gray-400">
+                        <input type="radio" disabled>
+                        <span>自動取得 IP 位址(O)</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" checked class="text-blue-700">
+                        <span>使用下列的 IP 位址(S):</span>
+                    </label>
+                    <div class="pl-5 grid grid-cols-[90px_1fr] gap-y-2.5 items-center mt-1">
+                        <span class="text-gray-800">IP 位址(I):</span>
+                        <div class="flex items-center bg-white border border-gray-400 rounded-sm px-1 py-0.5 w-[150px] shadow-inner">
+                            <input type="text" id="winIp1" class="win-input w-7 text-center outline-none" readonly>.
+                            <input type="text" id="winIp2" class="win-input w-7 text-center outline-none" readonly>.
+                            <input type="text" id="winIp3" class="win-input w-7 text-center outline-none" readonly>.
+                            <input type="text" id="winIp4" class="win-input w-7 text-center outline-none font-bold text-blue-700 bg-blue-50" readonly>
+                        </div>
+                        <span class="text-gray-800">子網路遮罩(U):</span>
+                        <div class="flex items-center bg-white border border-gray-400 rounded-sm px-1 py-0.5 w-[150px] shadow-inner">
+                            <input type="text" id="winMask1" class="win-input w-7 text-center outline-none" readonly>.
+                            <input type="text" id="winMask2" class="win-input w-7 text-center outline-none" readonly>.
+                            <input type="text" id="winMask3" class="win-input w-7 text-center outline-none" readonly>.
+                            <input type="text" id="winMask4" class="win-input w-7 text-center outline-none font-bold text-blue-700 bg-blue-50" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-[#f0f0f0] px-4 py-3 border-t border-gray-300 flex justify-end gap-2 rounded-b select-none">
+                <button onclick="closeExamModal()" class="px-6 py-1 bg-[#e1e1e1] border border-gray-400 rounded text-black hover:border-blue-500 transition">確定</button>
+            </div>
+        </div>
+    </div>
+
     <footer class="text-center py-5 text-[11px] text-slate-500 font-mono border-t border-slate-900 bg-[#020408] relative z-10">
-        <p>THHS Network Setup Technician (Class C) Calculation Core v4.7 &copy; 2026</p>
+        <p>THHS Network Setup Technician (Class C) Calculation Core v4.9 &copy; 2026</p>
     </footer>
 
     <script>
@@ -285,22 +384,22 @@
             if (e.keyCode === 123) return false;
             if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) return false;
             if (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83 || e.keyCode === 67 || e.keyCode === 65 || e.keyCode === 88)) return false;
-            // 偵測 PrintScreen 鍵直接觸發黑頻
             if (e.keyCode === 44) {
                 triggerBlackoutShield();
-                setTimeout(hideBlackoutShield, 2500); // 2.5秒後恢復
+                setTimeout(hideBlackoutShield, 2500);
             }
         });
         document.addEventListener('dragstart', e => e.preventDefault());
-        document.addEventListener('selectstart', e => e.preventDefault());
+        document.addEventListener('selectstart', e => {
+            // 允許輸入框被選取
+            if (e.target.tagName === 'INPUT' || e.target.classList.contains('win-input')) {
+                return true;
+            }
+            e.preventDefault();
+        });
 
-        // 視窗失去焦點（切換截圖工具或背景）時觸發黑頻
-        window.addEventListener('blur', () => {
-            triggerBlackoutShield();
-        });
-        window.addEventListener('focus', () => {
-            hideBlackoutShield();
-        });
+        window.addEventListener('blur', triggerBlackoutShield);
+        window.addEventListener('focus', hideBlackoutShield);
 
         function triggerBlackoutShield() {
             const shield = document.getElementById('blackoutShield');
@@ -310,8 +409,6 @@
             const shield = document.getElementById('blackoutShield');
             if (shield) shield.classList.remove('active');
         }
-
-        let currentCalculatedResult = {};
 
         function initOnlineUsers() {
             const onlineEl = document.getElementById('onlineUserCount');
@@ -324,73 +421,74 @@
             }, 8000);
         }
 
+        // 導覽列切換
         function switchTab(tabName) {
-            const viewHome = document.getElementById('viewHome');
-            const viewCalculator = document.getElementById('viewCalculator');
-            const navHome = document.getElementById('navHome');
-            const navCalc = document.getElementById('navCalc');
+            document.getElementById('viewHome').classList.add('hidden');
+            document.getElementById('viewCalculator').classList.add('hidden');
+            document.getElementById('viewTest').classList.add('hidden');
             
-            viewHome.classList.add('hidden');
-            viewCalculator.classList.add('hidden');
-            navHome.className = "text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer text-slate-300 hover:text-white";
-            navCalc.className = "text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer text-slate-300 hover:text-white";
+            const inactiveClass = "text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer text-slate-300 hover:text-white whitespace-nowrap";
+            const activeClass = "text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer bg-blue-600 text-white shadow-md shadow-blue-500/20 whitespace-nowrap";
+            const activeTestClass = "text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer bg-yellow-500 text-black shadow-md shadow-yellow-500/20 whitespace-nowrap flex items-center gap-1";
             
+            document.getElementById('navHome').className = inactiveClass;
+            document.getElementById('navCalc').className = inactiveClass;
+            document.getElementById('navTest').className = inactiveClass + " flex items-center gap-1";
+            document.getElementById('navTest').innerHTML = '<span class="text-yellow-400">🔥</span>實戰測驗';
+
             if (tabName === 'home') {
-                viewHome.classList.remove('hidden');
-                navHome.className = "text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer bg-blue-600 text-white shadow-md shadow-blue-500/20";
+                document.getElementById('viewHome').classList.remove('hidden');
+                document.getElementById('navHome').className = activeClass;
             } else if (tabName === 'calculator') {
-                viewCalculator.classList.remove('hidden');
-                navCalc.className = "text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer bg-blue-600 text-white shadow-md shadow-blue-500/20";
+                document.getElementById('viewCalculator').classList.remove('hidden');
+                document.getElementById('navCalc').className = activeClass;
                 calculateSubnet();
+            } else if (tabName === 'test') {
+                document.getElementById('viewTest').classList.remove('hidden');
+                document.getElementById('navTest').className = activeTestClass;
+                document.getElementById('navTest').innerHTML = '🔥實戰測驗';
+                if(!quizCurrentQuestion.isGenerated) generateNewQuiz();
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // ================= 智慧計算機邏輯 =================
+        let currentCalculatedResult = {};
+
         function copyAnswerToClipboard() {
             if (!currentCalculatedResult.ip) return;
-            const textToCopy = `[THHS 丙級術科解答 v4.7]\n目標 IP: ${currentCalculatedResult.ip}\n子網路遮罩: ${currentCalculatedResult.mask}`;
-            
+            const textToCopy = `[THHS 丙級術科解答]\n目標 IP: ${currentCalculatedResult.ip}\n子網路遮罩: ${currentCalculatedResult.mask}`;
             navigator.clipboard.writeText(textToCopy).then(() => {
                 const copyBtn = document.getElementById('btnCopyResult');
                 if (copyBtn) {
-                    copyBtn.innerText = "✓ 已複製到剪貼簿";
-                    setTimeout(() => { copyBtn.innerText = "📋 一鍵複製答案"; }, 2000);
+                    copyBtn.innerText = "✓ 已複製";
+                    setTimeout(() => { copyBtn.innerText = "📋 複製文字"; }, 2000);
                 }
             });
         }
 
-        function calculateSubnet() {
-            const cidrInput = document.getElementById('inputCidr');
-            const serverIpInput = document.getElementById('inputServerIp');
-            const seatInput = document.getElementById('inputSeat');
-            const solutionOutput = document.getElementById('solutionOutput');
-
-            if (!cidrInput || !serverIpInput || !seatInput || !solutionOutput) return;
-
-            const cidr = parseInt(cidrInput.value);
-            const serverIp = serverIpInput.value.trim();
-            const seatNumber = parseInt(seatInput.value) || 0;
-
-            const ipOctets = serverIp.split('.');
-            if (ipOctets.length !== 4) {
-                solutionOutput.innerHTML = '<div class="p-4 bg-rose-500/10 text-rose-400 rounded-xl text-xs font-mono font-semibold border border-rose-500/20">錯誤：請輸入格式正確的 IPv4 位址。</div>';
-                return;
+        function openExamModal(ipStr, maskStr) {
+            const ipArr = ipStr.split('.');
+            const maskArr = maskStr.split('.');
+            for(let i = 0; i < 4; i++) {
+                document.getElementById('winIp' + (i+1)).value = ipArr[i] || '';
+                document.getElementById('winMask' + (i+1)).value = maskArr[i] || '';
             }
+            document.getElementById('examModal').classList.remove('hidden');
+        }
 
-            const octet1 = ipOctets[0];
-            const octet2 = ipOctets[1];
-            const octet3 = ipOctets[2];
+        function closeExamModal() {
+            document.getElementById('examModal').classList.add('hidden');
+        }
+
+        function getCalculationLogic(cidr, serverIpStr, seatNumber) {
+            const ipOctets = serverIpStr.split('.');
+            if (ipOctets.length !== 4) return { error: true, msg: "IP 格式錯誤" };
+            const octet1 = ipOctets[0], octet2 = ipOctets[1], octet3 = ipOctets[2];
             const octet4 = parseInt(ipOctets[3]);
+            if (isNaN(octet4) || octet4 < 0 || octet4 > 255) return { error: true, msg: "IP 範圍錯誤" };
 
-            if (isNaN(octet4) || octet4 < 0 || octet4 > 255) {
-                solutionOutput.innerHTML = '<div class="p-4 bg-rose-500/10 text-rose-400 rounded-xl text-xs font-mono font-semibold border border-rose-500/20">錯誤：IP 最後一個區段數值需介於 0 到 255 之間。</div>';
-                return;
-            }
-
-            let blockSize = 256;
-            let subnetMask = "255.255.255.0";
-            let numSubnets = 1;
-
+            let blockSize = 256, subnetMask = "255.255.255.0", numSubnets = 1;
             if (cidr === 24) { blockSize = 256; subnetMask = "255.255.255.0"; numSubnets = 1; } 
             else if (cidr === 25) { blockSize = 128; subnetMask = "255.255.255.128"; numSubnets = 2; } 
             else if (cidr === 26) { blockSize = 64; subnetMask = "255.255.255.192"; numSubnets = 4; } 
@@ -398,118 +496,192 @@
 
             const networkIdOctet = Math.floor(octet4 / blockSize) * blockSize;
             const targetHostOctet = networkIdOctet + seatNumber;
-            const calculatedIp = `${octet1}.${octet2}.${octet3}.${targetHostOctet}`;
+            const targetIp = `${octet1}.${octet2}.${octet3}.${targetHostOctet}`;
 
-            currentCalculatedResult = { ip: calculatedIp, mask: subnetMask };
+            return { error: false, cidr, octet1, octet2, octet3, octet4, seatNumber, blockSize, subnetMask, numSubnets, networkIdOctet, targetHostOctet, targetIp };
+        }
 
+        function calculateSubnet() {
+            const cidr = parseInt(document.getElementById('inputCidr').value);
+            const serverIp = document.getElementById('inputServerIp').value.trim();
+            const seat = parseInt(document.getElementById('inputSeat').value) || 0;
+            const solutionOutput = document.getElementById('solutionOutput');
+
+            const res = getCalculationLogic(cidr, serverIp, seat);
+            if(res.error) {
+                solutionOutput.innerHTML = `<div class="p-4 bg-rose-500/10 text-rose-400 rounded-xl text-xs font-mono font-semibold border border-rose-500/20">錯誤：${res.msg}。</div>`;
+                return;
+            }
+
+            currentCalculatedResult = { ip: res.targetIp, mask: res.subnetMask };
+            solutionOutput.innerHTML = renderSolutionHTML(res, true);
+        }
+
+        // ================= 測驗中心邏輯 =================
+        let streakCount = 0;
+        let attemptCount = 0;
+        let quizCurrentQuestion = { isGenerated: false };
+
+        function generateNewQuiz() {
+            attemptCount++;
+            document.getElementById('quizAttemptCount').innerText = attemptCount;
+            document.getElementById('ansMask').value = "";
+            document.getElementById('ansIp').value = "";
+            document.getElementById('quizFeedback').innerHTML = "";
+            document.getElementById('quizFeedback').classList.add('hidden');
+            
+            document.getElementById('btnSubmitQuiz').classList.remove('hidden');
+            document.getElementById('btnNextQuiz').classList.add('hidden');
+            document.getElementById('ansMask').disabled = false;
+            document.getElementById('ansIp').disabled = false;
+
+            const cidrList = [24, 25, 26, 27];
+            const randomCidr = cidrList[Math.floor(Math.random() * cidrList.length)];
+            const ipPrefix = Math.random() > 0.5 ? "192.168.1" : "218.216.101";
+            const randomServerIp4 = Math.floor(Math.random() * 256);
+            const serverIp = `${ipPrefix}.${randomServerIp4}`;
+            const randomSeat = Math.floor(Math.random() * 30) + 1; // 1~30
+
+            // 取得正解
+            quizCurrentQuestion = getCalculationLogic(randomCidr, serverIp, randomSeat);
+            quizCurrentQuestion.isGenerated = true;
+
+            document.getElementById('qServerIp').innerText = serverIp;
+            document.getElementById('qCidr').innerText = `/${randomCidr}`;
+            document.getElementById('qSeat').innerText = randomSeat;
+        }
+
+        function checkQuizAnswer() {
+            const userMask = document.getElementById('ansMask').value.trim();
+            const userIp = document.getElementById('ansIp').value.trim();
+            
+            if(!userMask || !userIp) {
+                alert("請填寫所有欄位喔！");
+                return;
+            }
+
+            const isMaskCorrect = (userMask === quizCurrentQuestion.subnetMask);
+            const isIpCorrect = (userIp === quizCurrentQuestion.targetIp);
+            
+            const feedbackDiv = document.getElementById('quizFeedback');
+            feedbackDiv.classList.remove('hidden');
+
+            if(isMaskCorrect && isIpCorrect) {
+                streakCount++;
+                document.getElementById('streakCount').innerText = streakCount;
+                feedbackDiv.innerHTML = `
+                    <div class="tech-card p-6 rounded-2xl border-2 border-emerald-500/50 bg-emerald-950/20 text-center space-y-3 animate-pop-in">
+                        <div class="text-4xl">🎉</div>
+                        <h3 class="text-lg font-bold text-emerald-400 font-mono tracking-widest">完全正確！(PERFECT)</h3>
+                        <p class="text-xs text-slate-300">太棒了！小老師為你感到驕傲，繼續保持這個手感！</p>
+                    </div>
+                `;
+            } else {
+                streakCount = 0; // 斷連擊
+                document.getElementById('streakCount').innerText = streakCount;
+                feedbackDiv.innerHTML = `
+                    <div class="tech-card p-6 rounded-2xl border-2 border-rose-500/50 bg-rose-950/20 space-y-4 animate-pop-in">
+                        <div class="text-center space-y-2">
+                            <div class="text-3xl">💦</div>
+                            <h3 class="text-base font-bold text-rose-400 font-mono tracking-wider">哎呀，算錯囉！(INCORRECT)</h3>
+                            <p class="text-xs text-slate-300">沒關係，考試前犯錯都是好事。來看看小老師的正確步驟吧：</p>
+                        </div>
+                        <div class="mt-4">
+                            ${renderSolutionHTML(quizCurrentQuestion, false)}
+                        </div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('ansMask').disabled = true;
+            document.getElementById('ansIp').disabled = true;
+            document.getElementById('btnSubmitQuiz').classList.add('hidden');
+            document.getElementById('btnNextQuiz').classList.remove('hidden');
+        }
+
+        // ================= 共用解析 HTML 產生器 =================
+        function renderSolutionHTML(res, showSimulatorBtn = false) {
             let tableRowsHtml = '';
-            for (let i = 0; i < numSubnets; i++) {
-                let subnetNetworkOctet = i * blockSize;
-                let firstHostOctet = subnetNetworkOctet + 1;
-                let lastHostOctet = subnetNetworkOctet + blockSize - 2;
-                let broadcastOctet = subnetNetworkOctet + blockSize - 1;
-                let isServerSubnet = (octet4 >= subnetNetworkOctet && octet4 <= broadcastOctet);
+            for (let i = 0; i < res.numSubnets; i++) {
+                let subNet = i * res.blockSize;
+                let firstHost = subNet + 1;
+                let lastHost = subNet + res.blockSize - 2;
+                let broadcast = subNet + res.blockSize - 1;
+                let isServerSubnet = (res.octet4 >= subNet && res.octet4 <= broadcast);
 
                 let rowStyle = isServerSubnet 
                     ? "neon-highlight text-blue-100 font-extrabold border-l-4 border-blue-400 text-xs sm:text-sm" 
-                    : "bg-slate-900/40 text-slate-300 hover:bg-slate-900/80 text-xs";
+                    : "bg-slate-900/40 text-slate-300 text-xs";
 
                 tableRowsHtml += `
-                    <tr class="${rowStyle} border-b border-slate-800 font-mono transition">
-                        <td class="py-3 px-3.5 font-bold">第 ${i + 1} 分區 ${isServerSubnet ? '<span class="ml-1.5 px-2 py-0.5 bg-blue-500 text-white text-[10px] rounded-full font-sans tracking-wide shadow-md shadow-blue-500/40 animate-pulse">⚡ 伺服器所在分區 (亮燈)</span>' : ''}</td>
-                        <td class="py-3 px-3.5 ${isServerSubnet ? 'text-blue-300 font-extrabold text-sm' : 'text-slate-200'}">${octet1}.${octet2}.${octet3}.${subnetNetworkOctet}</td>
-                        <td class="py-3 px-3.5 ${isServerSubnet ? 'text-blue-300 font-extrabold text-sm' : 'text-slate-300'}">${octet1}.${octet2}.${octet3}.${firstHostOctet} ~ ${octet1}.${octet2}.${octet3}.${lastHostOctet}</td>
-                        <td class="py-3 px-3.5 ${isServerSubnet ? 'text-blue-300 font-extrabold text-sm' : 'text-slate-400'}">${octet1}.${octet2}.${octet3}.${broadcastOctet}</td>
+                    <tr class="${rowStyle} border-b border-slate-800 font-mono">
+                        <td class="py-2.5 px-3 font-bold">第 ${i + 1} 區 ${isServerSubnet ? '<span class="ml-1 text-[9px] bg-blue-500 text-white px-1.5 py-0.5 rounded-full shadow-md">⚡ 伺服器區</span>' : ''}</td>
+                        <td class="py-2.5 px-3 ${isServerSubnet ? 'text-blue-300' : ''}">${res.octet1}.${res.octet2}.${res.octet3}.${subNet}</td>
+                        <td class="py-2.5 px-3 ${isServerSubnet ? 'text-blue-300' : ''}">${res.octet1}.${res.octet2}.${res.octet3}.${broadcast}</td>
                     </tr>
                 `;
             }
 
-            solutionOutput.innerHTML = `
-                <!-- 頂部重點答案區 -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-pop-in">
-                    <div class="p-5 bg-slate-900/80 rounded-xl border border-slate-800 flex flex-col justify-center space-y-1">
-                        <span class="text-xs text-slate-400 font-bold uppercase font-mono tracking-wider">子網路遮罩 (SUBNET MASK)</span>
-                        <span class="text-xl font-bold text-slate-100 font-mono animate-answer-glow">${subnetMask}</span>
+            const simBtn = showSimulatorBtn ? `
+                <button onclick="openExamModal('${res.targetIp}', '${res.subnetMask}')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl transition text-xs font-sans cursor-pointer shadow-lg shadow-blue-500/25 mt-3 flex items-center justify-center gap-2">
+                    <span class="text-base">🖥️</span> 進入考場實境模擬
+                </button>
+            ` : '';
+
+            return `
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-800 flex flex-col justify-center space-y-1">
+                        <span class="text-[10px] text-slate-400 font-bold uppercase font-mono tracking-wider">子網路遮罩 (Mask)</span>
+                        <span class="text-lg font-bold text-slate-100 font-mono">${res.subnetMask}</span>
                     </div>
-                    <div class="p-5 bg-gradient-to-br from-blue-950/90 to-indigo-950/90 rounded-xl border border-blue-500/70 shadow-xl shadow-blue-500/20 relative overflow-hidden flex flex-col justify-between space-y-2 animate-pop-in">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs text-blue-400 font-bold uppercase font-mono tracking-wider flex items-center gap-1.5">
-                                <span class="w-2 h-2 rounded-full bg-blue-400 animate-ping"></span> 正確 IP 位址 (最終答案)
-                            </span>
-                            <button id="btnCopyResult" onclick="copyAnswerToClipboard()" class="text-[11px] text-blue-300 bg-blue-500/20 hover:bg-blue-500/30 px-2.5 py-1 rounded-lg font-mono border border-blue-500/30 transition cursor-pointer">
-                                📋 一鍵複製答案
-                            </button>
-                        </div>
-                        <span class="text-2xl sm:text-3xl font-extrabold text-blue-200 font-mono tracking-wide animate-answer-glow">${calculatedIp}</span>
+                    <div class="p-4 bg-gradient-to-br from-blue-950/90 to-indigo-950/90 rounded-xl border border-blue-500/70 shadow-lg shadow-blue-500/20 relative flex flex-col justify-between space-y-1">
+                        <span class="text-[10px] text-blue-400 font-bold uppercase font-mono flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-ping"></span> 正確 IP 位址
+                        </span>
+                        <span class="text-xl sm:text-2xl font-extrabold text-blue-200 font-mono tracking-wide">${res.targetIp}</span>
                     </div>
                 </div>
 
-                <!-- 視覺強化：三步驟計算過程與原理解析 -->
-                <div class="p-5 bg-slate-900/90 rounded-2xl border border-blue-500/40 space-y-4 shadow-lg shadow-blue-500/10 animate-pop-in">
-                    <div class="flex items-center justify-between border-b border-blue-500/30 pb-3">
-                        <div class="flex items-center gap-2 font-bold font-mono">
-                            <span class="p-1 bg-blue-500/20 rounded-lg text-blue-400 text-sm">💡</span>
-                            <span class="text-white text-sm tracking-wide">三步驟解題過程與原理極致解析 (v4.7)</span>
-                        </div>
-                        <span class="text-[10px] bg-blue-500/20 text-blue-300 px-2.5 py-1 rounded-full border border-blue-500/30 font-mono font-bold uppercase">公式速算</span>
+                ${simBtn}
+
+                <div class="mt-4 p-4 bg-slate-900/90 rounded-2xl border border-blue-500/40 space-y-3 shadow-lg shadow-blue-500/10">
+                    <div class="flex items-center gap-2 font-bold font-mono border-b border-blue-500/30 pb-2">
+                        <span class="p-1 bg-blue-500/20 rounded-lg text-blue-400 text-xs">💡</span>
+                        <span class="text-white text-xs tracking-wide">三步驟解題極致解析</span>
                     </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
-                        <!-- 步驟 1 -->
-                        <div class="p-4 bg-slate-950/80 rounded-xl border border-slate-800/80 space-y-2.5 hover:border-blue-500/40 transition">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-blue-400 font-mono">步驟 1：確認遮罩與區塊大小</span>
-                                <span class="text-[9px] bg-blue-500/10 text-blue-300 px-2 py-0.5 rounded font-mono">Block Size</span>
-                            </div>
-                            <p class="text-xs text-slate-300 leading-relaxed">
-                                選擇 <span class="text-blue-300 font-mono font-bold">/${cidr}</span> 遮罩 (<span class="text-white font-mono font-semibold">${subnetMask}</span>)，代表將 256 個 IP 切分為 <span class="text-yellow-300 font-bold font-mono">${numSubnets}</span> 個分區，每區包含 <span class="text-emerald-400 font-bold font-mono">${blockSize}</span> 個 IP。
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div class="p-3 bg-slate-950/80 rounded-xl border border-slate-800/80 space-y-1.5">
+                            <span class="text-[10px] font-bold text-blue-400 font-mono">1：區塊大小</span>
+                            <p class="text-[11px] text-slate-300 leading-relaxed">
+                                /${res.cidr} 遮罩，切分為 ${res.numSubnets} 區，每區包含 <span class="text-emerald-400 font-bold">${res.blockSize}</span> 個 IP。
                             </p>
                         </div>
-
-                        <!-- 步驟 2 -->
-                        <div class="p-4 bg-slate-950/80 rounded-xl border border-slate-800/80 space-y-2.5 hover:border-blue-500/40 transition">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-blue-400 font-mono">步驟 2：尋找伺服器基準點</span>
-                                <span class="text-[9px] bg-blue-500/10 text-blue-300 px-2 py-0.5 rounded font-mono">Network ID</span>
-                            </div>
-                            <p class="text-xs text-slate-300 leading-relaxed">
-                                伺服器末碼為 <span class="text-yellow-300 font-bold font-mono">.${octet4}</span>，落在 <span class="text-white font-mono font-semibold">${networkIdOctet} ~ ${networkIdOctet + blockSize - 1}</span> 區塊，故基準點 Network ID 為 <span class="text-emerald-400 font-bold font-mono">${networkIdOctet}</span>。
+                        <div class="p-3 bg-slate-950/80 rounded-xl border border-slate-800/80 space-y-1.5">
+                            <span class="text-[10px] font-bold text-blue-400 font-mono">2：尋找基準點</span>
+                            <p class="text-[11px] text-slate-300 leading-relaxed">
+                                末碼 .${res.octet4} 落在以 <span class="text-emerald-400 font-bold">${res.networkIdOctet}</span> 為起點的區塊中。
                             </p>
                         </div>
-
-                        <!-- 步驟 3 -->
-                        <div class="p-4 bg-slate-950/80 rounded-xl border border-slate-800/80 space-y-2.5 hover:border-blue-500/40 transition">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-blue-400 font-mono">步驟 3：代入座號推導 IP</span>
-                                <span class="text-[9px] bg-blue-500/10 text-blue-300 px-2 py-0.5 rounded font-mono">Target IP</span>
-                            </div>
-                            <div class="p-2.5 bg-blue-950/50 rounded-lg border border-blue-500/30 text-center font-mono">
-                                <div class="text-[10px] text-slate-400 mb-1">以基準點加上考場座號 (${seatNumber} 號)</div>
-                                <div class="text-sm font-extrabold text-white">
-                                    ${networkIdOctet} + ${seatNumber} = <span class="text-yellow-300">${targetHostOctet}</span>
-                                </div>
-                            </div>
-                            <div class="text-center font-mono text-xs text-blue-300 font-bold">
-                                👉 目標 IP: <span class="text-emerald-400 font-extrabold">${calculatedIp}</span>
+                        <div class="p-3 bg-slate-950/80 rounded-xl border border-slate-800/80 space-y-1.5">
+                            <span class="text-[10px] font-bold text-blue-400 font-mono">3：代入座號</span>
+                            <div class="text-[11px] bg-blue-950/50 p-1.5 rounded border border-blue-500/30 text-center font-mono text-white">
+                                ${res.networkIdOctet} + ${res.seatNumber} = <span class="text-yellow-300 font-bold">${res.targetHostOctet}</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 子網路分區對照表 (含亮燈) -->
-                <div class="bg-slate-900/60 rounded-xl border border-slate-800 overflow-hidden shadow-inner animate-pop-in">
-                    <div class="p-3 bg-slate-900/90 border-b border-slate-800 flex justify-between items-center text-xs">
-                        <span class="font-bold text-slate-200 uppercase font-mono tracking-wider">子網路分區對照表 (伺服器分區自動亮燈)</span>
-                        <span class="text-blue-400 font-bold font-mono">遮罩: ${subnetMask}</span>
+                <div class="mt-4 bg-slate-900/60 rounded-xl border border-slate-800 overflow-hidden shadow-inner">
+                    <div class="p-2.5 bg-slate-900/90 border-b border-slate-800 flex justify-between items-center text-[10px]">
+                        <span class="font-bold text-slate-200 uppercase font-mono">分區對照表</span>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
+                        <table class="w-full text-left border-collapse text-[10px]">
                             <thead>
-                                <tr class="bg-slate-950/80 text-slate-400 text-[11px] uppercase border-b border-slate-800 font-mono">
-                                    <th class="py-2.5 px-3.5 font-bold">分區</th>
-                                    <th class="py-2.5 px-3.5 font-bold">網路位址 (NETWORK ID)</th>
-                                    <th class="py-2.5 px-3.5 font-bold">可用主機 IP 範圍</th>
-                                    <th class="py-2.5 px-3.5 font-bold">廣播位址 (BROADCAST)</th>
+                                <tr class="bg-slate-950/80 text-slate-400 uppercase border-b border-slate-800 font-mono">
+                                    <th class="py-2 px-3">分區</th>
+                                    <th class="py-2 px-3">Network ID</th>
+                                    <th class="py-2 px-3">Broadcast</th>
                                 </tr>
                             </thead>
                             <tbody>${tableRowsHtml}</tbody>
