@@ -328,6 +328,21 @@
 
     </main>
 
+    <!-- AI 小老師浮動按鈕 -->
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        <div id="aiChatBubble" class="hidden mb-3 p-4 bg-slate-900 border border-blue-500/50 rounded-2xl shadow-xl shadow-blue-900/20 max-w-[260px] transform transition-all duration-300">
+            <div class="flex items-center gap-2 mb-2 border-b border-slate-700 pb-2">
+                <div class="bg-blue-500/20 p-1.5 rounded-full text-lg">🤖</div>
+                <span class="text-xs font-bold text-blue-400 font-mono">AI 小老師溫馨提示</span>
+                <button onclick="toggleAiTeacher()" class="ml-auto text-slate-500 hover:text-white">&times;</button>
+            </div>
+            <p id="aiMessage" class="text-xs text-slate-300 leading-relaxed font-mono tracking-wide"></p>
+        </div>
+        <button onclick="toggleAiTeacher()" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white p-3.5 rounded-full shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2 transition transform hover:scale-110 active:scale-95 group border-2 border-blue-400/30">
+            <span class="text-2xl group-hover:animate-bounce">🤖</span>
+        </button>
+    </div>
+
     <!-- Windows 考場實境模擬對話框 (計算器專用) -->
     <div id="examModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[9000] hidden flex items-center justify-center p-4">
         <div class="bg-[#f0f0f0] text-black w-full max-w-[420px] rounded shadow-2xl border border-gray-400 font-sans text-[12px] cursor-default">
@@ -378,6 +393,29 @@
     </footer>
 
     <script>
+        /* ================= AI 小老師系統 ================= */
+        const aiTips = [
+            "嗨！我是你的 AI 小老師。遇到不會算的 IP，可以去「實戰測驗」多練幾次喔！",
+            "💡 小提示：/25 的區塊大小是 128，/26 的區塊大小是 64。把它們背起來，考試速度會快上一倍！",
+            "記得，尋找基準點的關鍵，就是把『伺服器末碼』拿去『除以區塊大小』！",
+            "不管前面算得多複雜，最後千萬別忘了『基準點 + 座號』才是你要設定的目標 IP 喔！",
+            "未來的超強資訊小老師，這套系統一定能幫助大家快速考取證照，加油！",
+            "別怕基本電學或網頁設計，只要邏輯通了，一切都會變得很簡單！"
+        ];
+
+        function toggleAiTeacher() {
+            const bubble = document.getElementById('aiChatBubble');
+            const msg = document.getElementById('aiMessage');
+            if(bubble.classList.contains('hidden')) {
+                msg.innerText = aiTips[Math.floor(Math.random() * aiTips.length)];
+                bubble.classList.remove('hidden');
+                bubble.classList.add('animate-pop-in');
+            } else {
+                bubble.classList.add('hidden');
+                bubble.classList.remove('animate-pop-in');
+            }
+        }
+
         /* 防拷與截圖黑頻保護 */
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', function(e) {
@@ -566,14 +604,17 @@
             const feedbackDiv = document.getElementById('quizFeedback');
             feedbackDiv.classList.remove('hidden');
 
+            // AI 小老師的回饋區塊
             if(isMaskCorrect && isIpCorrect) {
                 streakCount++;
                 document.getElementById('streakCount').innerText = streakCount;
                 feedbackDiv.innerHTML = `
-                    <div class="tech-card p-6 rounded-2xl border-2 border-emerald-500/50 bg-emerald-950/20 text-center space-y-3 animate-pop-in">
-                        <div class="text-4xl">🎉</div>
-                        <h3 class="text-lg font-bold text-emerald-400 font-mono tracking-widest">完全正確！(PERFECT)</h3>
-                        <p class="text-xs text-slate-300">太棒了！小老師為你感到驕傲，繼續保持這個手感！</p>
+                    <div class="tech-card p-6 rounded-2xl border-2 border-emerald-500/50 bg-emerald-950/20 space-y-3 animate-pop-in flex items-start gap-4">
+                        <div class="text-4xl bg-emerald-500/20 p-2 rounded-2xl">🤖</div>
+                        <div>
+                            <h3 class="text-lg font-bold text-emerald-400 font-mono tracking-widest mb-1">完全正確！(PERFECT)</h3>
+                            <p class="text-xs text-slate-300 leading-relaxed">太棒了！AI 小老師為你感到驕傲，繼續保持這個手感，考試一定沒問題！</p>
+                        </div>
                     </div>
                 `;
             } else {
@@ -581,10 +622,12 @@
                 document.getElementById('streakCount').innerText = streakCount;
                 feedbackDiv.innerHTML = `
                     <div class="tech-card p-6 rounded-2xl border-2 border-rose-500/50 bg-rose-950/20 space-y-4 animate-pop-in">
-                        <div class="text-center space-y-2">
-                            <div class="text-3xl">💦</div>
-                            <h3 class="text-base font-bold text-rose-400 font-mono tracking-wider">哎呀，算錯囉！(INCORRECT)</h3>
-                            <p class="text-xs text-slate-300">沒關係，考試前犯錯都是好事。來看看小老師的正確步驟吧：</p>
+                        <div class="flex items-start gap-4 mb-2">
+                            <div class="text-4xl bg-rose-500/20 p-2 rounded-2xl animate-pulse">🤖</div>
+                            <div>
+                                <h3 class="text-base font-bold text-rose-400 font-mono tracking-wider mb-1">哎呀，算錯囉！(INCORRECT)</h3>
+                                <p class="text-xs text-slate-300 leading-relaxed">沒關係，考試前犯錯都是好事。別灰心，來看看 AI 小老師為你準備的正確步驟吧：</p>
+                            </div>
                         </div>
                         <div class="mt-4">
                             ${renderSolutionHTML(quizCurrentQuestion, false)}
@@ -644,12 +687,12 @@
 
                 ${simBtn}
 
-                <!-- 優化後的教學級三步驟解析 -->
+                <!-- AI 小老師的教學級三步驟解析 -->
                 <div class="mt-4 p-5 bg-slate-900/90 rounded-2xl border border-blue-500/50 space-y-4 shadow-xl shadow-blue-900/20">
                     <div class="flex items-center justify-between border-b border-blue-500/30 pb-2.5">
                         <div class="flex items-center gap-2 font-bold font-mono">
-                            <span class="flex items-center justify-center w-6 h-6 bg-blue-500/20 rounded-lg text-blue-400 text-sm">💡</span>
-                            <span class="text-white text-sm tracking-wide">助教級三步驟邏輯拆解</span>
+                            <span class="flex items-center justify-center w-6 h-6 bg-blue-500/20 rounded-lg text-blue-400 text-sm">🤖</span>
+                            <span class="text-white text-sm tracking-wide">AI 小老師的邏輯拆解</span>
                         </div>
                         <span class="text-[10px] text-blue-400 bg-blue-950/50 px-2 py-0.5 rounded border border-blue-800">STEP-BY-STEP</span>
                     </div>
